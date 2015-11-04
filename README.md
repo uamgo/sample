@@ -17,7 +17,7 @@ Statement st = conn.createStatement();
 ```
 ResultSet rs = st.executeQuery("select * from t1");  
 while (rs.next()) {  
-&nbsp;&nbsp;System.out.println(rs.getInt(1) + "," + rs.getString(2) + "," + rs.getDouble(3));  
+  System.out.println(rs.getInt(1) + "," + rs.getString(2) + "," + rs.getDouble(3));  
 }
 ```
 ######release connection
