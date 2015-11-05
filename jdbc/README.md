@@ -16,12 +16,10 @@ ResultSet rs = st.executeQuery("select * from t1"); //perform a query
 while (rs.next()) {  
   System.out.println(rs.getInt(1) + "," + rs.getString(2) + "," + rs.getDouble(3));  
 }
-```
-######release connection
-```
+//release ResultSet and Statement
 rs.close();  
 st.close();  
-conn.close();
+
 ```
 ######Batch insert
 ```
