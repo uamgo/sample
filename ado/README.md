@@ -1,9 +1,12 @@
 ###ADO.NET Driver Sample
-######create a connection and perform a simple query
+######create a connection 
 ```
 EsgynDBConnection conn = new EsgynDBConnection(); //create a connection
 conn.ConnectionString = "server=10.0.0.5:23400;user=zz;password=zz;schema=ado";
 conn.Open();
+```
+######perform a simple query
+```
 EsgynDBCommand cmd = conn.CreateCommand(); //create a command
 cmd.CommandText = "select * from t0";
 using (EsgynDBDataReader dr = cmd.ExecuteReader())
@@ -19,4 +22,26 @@ using (EsgynDBDataReader dr = cmd.ExecuteReader())
     }
 }
 ```
-
+######None query
+```
+cmd.CommandText = "create table t0 (c1 varchar(20), c2 nchar(20))";
+cmd.ExecuteNonQuery();
+```
+######Batch insert
+```
+cmd.CommandText = "insert into t0 values(?,?)";
+//Define required parameters
+cmd.Parameters.Add(new EsgynDBParameter("c0", EsgynDBType.Varchar));
+cmd.Parameters.Add(new EsgynDBParameter("c1", EsgynDBType.Varchar));
+//Do prepare for insertion SQL. Tips: parameter definition should be done first, then do prepare. 
+cmd.Prepare();
+//fill data and add into batch
+for (int i = 0; i < 10; i++)
+{
+    cmd.Parameters[0].Value = "test col1";
+    cmd.Parameters[1].Value = "test col2";
+    cmd.AddBatch();
+}
+//Execute Batch
+cmd.ExecuteNonQuery();
+```
