@@ -34,7 +34,7 @@ ps.executeBatch();
 //close your statement
 ps.close();
 ```
-########release connection
+######release connection
 ```
 conn.close();
 ```
