@@ -40,7 +40,7 @@ conn.close();
 ```
 ######Apply a connection on Trafodion JDBC driver
 ```
-//related package
+//related packages
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
