@@ -25,7 +25,7 @@ conn.close();
 ```
 ######Batch insert
 ```
-PreparedStatement ps = fromConn.prepareStatement("insert into mylocaltest.t1(id, name, weight) values(?,?,?)");
+PreparedStatement ps = conn.prepareStatement("insert into mylocaltest.t1(id, name, weight) values(?,?,?)");
 for(int i=0; i<1000; i++){
 	ps.setInt(1, r.nextInt());
 	ps.setString(2, "aaa"+r.nextLong());
