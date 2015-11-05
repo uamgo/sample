@@ -38,3 +38,26 @@ ps.close();
 ```
 conn.close();
 ```
+######Apply a connection on Trafodion JDBC driver
+```
+//related package
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
+//create a connection pool. The pool usually is a global variable.
+HikariConfig config = new HikariConfig();
+config.setMaximumPoolSize(10);
+config.setIdleTimeout(60000);
+config.setDriverClassName("org.trafodion.jdbc.t4.T4Driver");
+config.setJdbcUrl("jdbc:t4jdbc://192.168.0.34:23400/:");
+config.setUsername("zz");
+config.setPassword("zz");
+pool = new HikariDataSource(config);
+
+//get a connection from connection pool
+Connection conn = pool.getConnection("org.trafodion.jdbc.t4.T4Driver");
+/*
+doing what you want with conn
+*/
+conn.close();//conn will return back to pool
+```
