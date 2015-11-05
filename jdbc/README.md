@@ -40,7 +40,7 @@ conn.close();
 ```
 ######Apply a connection pool on Trafodion JDBC driver. Take [HikariCP](https://github.com/brettwooldridge/HikariCP) as an example
 ```
-//related packages
+//related HikariCP packages
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
