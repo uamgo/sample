@@ -57,7 +57,7 @@ public class LoadDataTest {
 		st.execute("create table if not exists mylocaltest.t1 (id int, name varchar(100),weight numeric(18,2))");
 		st.execute("create table if not exists mylocaltest.t2 (id int, name varchar(100),weight numeric(18,2))");
 		st.close();
-		PreparedStatement ps = fromConn.prepareStatement("insert into mylocaltest.t1");
+		PreparedStatement ps = fromConn.prepareStatement("insert into mylocaltest.t1(id, name, weight) values(?,?,?)");
 		for(int i=0; i<1000; i++){
 			ps.setInt(1, r.nextInt());
 			ps.setString(2, "aaa"+r.nextLong());
