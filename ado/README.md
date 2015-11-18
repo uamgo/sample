@@ -1,33 +1,12 @@
-##Example for JDBC/ODBC/ADO.NET drivers
-###JDBC Sample
-```
-String url="jdbc:t4jdbc://10.10.10.136:23400/:";    
-String driverClass="org.trafodion.jdbc.t4.T4Driver";
-String userName="zz";
-String pwd="zz";
-```
-######create a connection and perform a simple query
-```
-Class.forName(driverClass);  //load driver class
-Connection conn = DriverManager.getConnection(url, userName, pwd); //get a new connection
-Statement st = conn.createStatement();  //create a statement
-ResultSet rs = st.executeQuery("select * from t1"); //perform a query
-while (rs.next()) {  
-  System.out.println(rs.getInt(1) + "," + rs.getString(2) + "," + rs.getDouble(3));  
-}
-```
-######release connection
-```
-rs.close();  
-st.close();  
-conn.close();
-```
 ###ADO.NET Driver Sample
-######create a connection and perform a simple query
+######create a connection 
 ```
 EsgynDBConnection conn = new EsgynDBConnection(); //create a connection
 conn.ConnectionString = "server=10.0.0.5:23400;user=zz;password=zz;schema=ado";
 conn.Open();
+```
+######perform a simple query
+```
 EsgynDBCommand cmd = conn.CreateCommand(); //create a command
 cmd.CommandText = "select * from t0";
 using (EsgynDBDataReader dr = cmd.ExecuteReader())
@@ -43,4 +22,26 @@ using (EsgynDBDataReader dr = cmd.ExecuteReader())
     }
 }
 ```
-
+######None query
+```
+cmd.CommandText = "create table t0 (c1 varchar(20), c2 nchar(20))";
+cmd.ExecuteNonQuery();
+```
+######Batch insert
+```
+cmd.CommandText = "insert into t0 values(?,?)";
+//Define required parameters
+cmd.Parameters.Add(new EsgynDBParameter("c0", EsgynDBType.Varchar));
+cmd.Parameters.Add(new EsgynDBParameter("c1", EsgynDBType.Varchar));
+//Do prepare for insertion SQL. Tips: parameter definition should be done first, then do prepare. 
+cmd.Prepare();
+//fill data and add into batch
+for (int i = 0; i < 10; i++)
+{
+    cmd.Parameters[0].Value = "test col1";
+    cmd.Parameters[1].Value = "test col2";
+    cmd.AddBatch();
+}
+//Execute Batch
+cmd.ExecuteNonQuery();
+```
