@@ -81,7 +81,7 @@ public class UploadJAR extends BaseTest {
 
 	@Test
 	public void uploadPartially() throws SQLException, IOException {
-		CallableStatement pc = this.conn.prepareCall("{call default_spj.put(?,?,?,?)}");
+		CallableStatement pc = this.conn.prepareCall("{call default_spj.put(?,?,?)}");
 		File file = new File("d:\\lib\\slf4j-api-1.7.12.jar");
 		FileInputStream in = new FileInputStream(file);
 		byte[] b = new byte[10240];
@@ -96,8 +96,7 @@ public class UploadJAR extends BaseTest {
 			log.info("compressed length: " + clen);
 			pc.setString(1, new String(Snappy.compress(s.getBytes("ISO-8859-1")), "ISO-8859-1"));
 			pc.setString(2, file.getName());
-			pc.setInt(3, clen);
-			pc.setInt(4, flag);
+			pc.setInt(3, flag);
 			pc.execute();
 			if (flag == 1) {
 				flag = 0;
