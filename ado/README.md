@@ -29,7 +29,8 @@ cmd.ExecuteNonQuery();
 ```
 ######Batch insert
 ```
-cmd.CommandText = "insert into t0 values(?,?)";
+cmd.CommandText = "insert into t0 values(?,?)";  
+//cmd.CommandText = "upsert using load into t0 values(?,?)";  
 //Define required parameters
 cmd.Parameters.Add(new EsgynDBParameter("c0", EsgynDBType.Varchar));
 cmd.Parameters.Add(new EsgynDBParameter("c1", EsgynDBType.Varchar));
