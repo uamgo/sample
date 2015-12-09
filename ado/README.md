@@ -28,7 +28,7 @@ cmd.CommandText = "create table t0 (c1 varchar(20), c2 nchar(20))";
 cmd.ExecuteNonQuery();
 ```
 ######Batch insert
-```
+```  
 cmd.CommandText = "insert into t0 values(?,?)";  
 //cmd.CommandText = "upsert using load into t0 values(?,?)";  
 //Define required parameters
@@ -44,5 +44,11 @@ for (int i = 0; i < 10; i++)
     cmd.AddBatch();
 }
 //Execute Batch
-cmd.ExecuteNonQuery();
-```
+cmd.ExecuteNonQuery();  
+IEnumerator errs = cmd.WarnOrErrors.GetEnumerator();  
+while (errs.MoveNext())  
+{  
+    EsgynDBError err = (EsgynDBError)errs.Current;  
+    log.Info(err.RowId + "," + err.Message + "," + err.ErrorCode + "," + err.State);  
+}  
+```  
