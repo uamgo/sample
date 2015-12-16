@@ -20,6 +20,11 @@ private static final Logger log = LoggerFactory.getLogger(SelectTest.class);
 		ResultSet rs = null;
 		try {
 			st = conn.createStatement();
+			ResultSet su = st.executeQuery("values(session_user)");
+			while(su.next()){
+				System.out.println(su.getObject(1));
+			}
+			su.close();
 			rs = st.executeQuery(sql);
 			while (rs.next()) {
 				log.info(rs.getInt(1) + "," + rs.getString(2) + "," + rs.getDouble(3));

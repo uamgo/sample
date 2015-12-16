@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using EsgynDB.Data;
+using System.Collections;
 
 namespace AdoSamples
 {
@@ -9,6 +10,90 @@ namespace AdoSamples
     {
         private string ConnectionString = "server=10.10.10.136:23400;user=zz;password=zz;schema=ado";
         private log4net.ILog log = log4net.LogManager.GetLogger(typeof(BatchInsertSample));
+
+        [TestMethod]
+        public void TestBatch()
+        {
+            try
+            {
+                using (EsgynDBConnection conn = new EsgynDBConnection())
+                {
+                    conn.ConnectionString = ConnectionString;
+                    conn.Open();
+
+                    using (EsgynDBCommand cmd = conn.CreateCommand())
+                    {
+                        try
+                        {
+                            cmd.CommandText = "drop table t0";
+                            cmd.ExecuteNonQuery();
+                        }
+                        catch (Exception e)
+                        {
+                            log.Warn(e.Message);
+                        }
+
+                        cmd.CommandText = "create table t0 (c1 varchar(20), c2 nchar(20)) no partition";
+                        cmd.ExecuteNonQuery();
+
+                        cmd.CommandText = "insert into t0 values(?,?)";
+                        cmd.Parameters.Add(new EsgynDBParameter("c0", EsgynDBType.Varchar));
+                        cmd.Parameters.Add(new EsgynDBParameter("c1", EsgynDBType.Varchar));
+
+                        cmd.Prepare();
+
+                        for (int i = 0; i < 10; i++)
+                        {
+                            if (i == 2)
+                                cmd.Parameters[0].Value = "test col1";
+                            else
+                                cmd.Parameters[0].Value = "test col1rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr";
+                            cmd.Parameters[1].Value = "test col2";
+                            cmd.AddBatch();
+                            log.Info(cmd.Parameters[0].Value);
+                        }
+
+                        //cmd.ExecuteNonQuery();
+                        //Console.Read();
+
+                        int[] rs = cmd.ExecuteNonQuery();
+                        Console.WriteLine("print result");
+                        foreach (int a in rs)
+                        {
+                            log.Info(a);
+                        }
+
+                        log.Info("start to select ....");
+                        cmd.Parameters.Clear();
+                        cmd.CommandText = "select * from t0";
+                        using (EsgynDBDataReader dr = cmd.ExecuteReader())
+                        {
+                            while (dr.Read())
+                            {
+                                for (int i = 0; i < dr.FieldCount; i++)
+                                {
+                                    log.Info(dr.GetValue(i) + " " + dr.GetDataTypeName(i));
+                                }
+
+                                
+                            }
+
+                        }
+                    }
+                }
+            }
+            catch (EsgynDBException e)
+            {
+                log.Info(e.ToString());
+                for (int i = 0; i < e.Errors.Count; i++)
+                {
+                    log.Info(e.Errors[i]);
+                }
+
+            }
+            
+        }
+
 
         [TestMethod]
         public void TestBatchLoad()

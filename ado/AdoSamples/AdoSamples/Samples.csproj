@@ -35,10 +35,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EsgynDB.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cfb872a824fb4c13, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Build\EsgynDBADO\Release\EsgynDB.Data.dll</HintPath>
-    </Reference>
+    <Reference Include="EsgynDB.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cfb872a824fb4c13, processorArchitecture=MSIL" />
     <Reference Include="log4net">
       <HintPath>..\..\..\..\lib\log4net-1.2.13\bin\net\3.5\release\log4net.dll</HintPath>
     </Reference>

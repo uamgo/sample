@@ -51,7 +51,7 @@ public class UploadJAR extends BaseTest {
 	}
 
 	@Test
-	public void upload() throws SQLException, IOException {
+	public void upload() throws SQLException, IOException { 
 		CallableStatement pc = this.conn.prepareCall("{call default_spj.put(?,?,?)}");
 		File file = new File("d:\\lib\\ojdbc14-10.2.0.4.0.jar");
 		FileInputStream in = new FileInputStream(file);
@@ -65,7 +65,7 @@ public class UploadJAR extends BaseTest {
 			clen = Snappy.compress(s.getBytes("ISO-8859-1")).length;
 			log.info("converted length: " + s.getBytes("ISO-8859-1").length);
 			log.info("compressed length: " + clen);
-			pc.setString(1, new String(Snappy.compress(s.getBytes("ISO-8859-1")), "ISO-8859-1"));
+			pc.setString(1, new String(s.getBytes("ISO-8859-1"), "ISO-8859-1"));
 			pc.setString(2, file.getName());
 			pc.setInt(3, flag);
 			pc.execute();
