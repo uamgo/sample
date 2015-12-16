@@ -1,5 +1,5 @@
 ##Example for JDBC/ODBC/ADO.NET drivers
-###JDBC Sample
+###JDBC Sample( For more details, please go into "jdbc")
 ```
 String url="jdbc:t4jdbc://10.10.10.136:23400/:";    
 String driverClass="org.trafodion.jdbc.t4.T4Driver";
@@ -22,7 +22,7 @@ rs.close();
 st.close();  
 conn.close();
 ```
-###ADO.NET Driver Sample
+###ADO.NET Driver Sample( For more details, please go into "ado")  
 ######create a connection and perform a simple query
 ```
 EsgynDBConnection conn = new EsgynDBConnection(); //create a connection

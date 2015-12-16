@@ -35,13 +35,21 @@ cmd.Parameters.Add(new EsgynDBParameter("c0", EsgynDBType.Varchar));
 cmd.Parameters.Add(new EsgynDBParameter("c1", EsgynDBType.Varchar));
 //Do prepare for insertion SQL. Tips: parameter definition should be done first, then do prepare. 
 cmd.Prepare();
-//fill data and add into batch
-for (int i = 0; i < 10; i++)
-{
+try{  
+  //fill data and add into batch
+  for (int i = 0; i < 10; i++)
+  {
     cmd.Parameters[0].Value = "test col1";
     cmd.Parameters[1].Value = "test col2";
     cmd.AddBatch();
-}
-//Execute Batch
-cmd.ExecuteNonQuery();
+  }
+  //Execute Batch
+  cmd.ExecuteNonQuery();  
+catch(EsgynDBException e)  
+{  
+  for(int i=0; i<e.Errors.Count; i++)  
+  {  
+   Console.WriteLine(e.Errors[i]);  
+  }  
+}  
 ```
