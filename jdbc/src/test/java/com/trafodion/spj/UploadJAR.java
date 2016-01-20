@@ -52,21 +52,19 @@ public class UploadJAR extends BaseTest {
 
 	@Test
 	public void upload() throws SQLException, IOException { 
-		CallableStatement pc = this.conn.prepareCall("{call default_spj.put(?,?,?)}");
-		File file = new File("d:\\lib\\ojdbc14-10.2.0.4.0.jar");
+		CallableStatement pc = this.conn.prepareCall("{call DB__LIBMGR.put(?,?,?)}");
+		File file = new File("d:\\lib\\spj_init.jar");
 		FileInputStream in = new FileInputStream(file);
-		byte[] b = new byte[102400];
+		byte[] b = new byte[25600];
 		int len = -1;
 		int flag = 1;
 		int clen = 0;
 		while ((len = in.read(b)) != -1) {
 			log.info("file length: " + len);
 			String s = new String(b, 0, len, "ISO-8859-1");
-			clen = Snappy.compress(s.getBytes("ISO-8859-1")).length;
 			log.info("converted length: " + s.getBytes("ISO-8859-1").length);
-			log.info("compressed length: " + clen);
 			pc.setString(1, new String(s.getBytes("ISO-8859-1"), "ISO-8859-1"));
-			pc.setString(2, file.getName());
+			pc.setString(2, file.getName()+5);
 			pc.setInt(3, flag);
 			pc.execute();
 			if (flag == 1) {

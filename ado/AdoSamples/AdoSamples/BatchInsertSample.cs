@@ -56,13 +56,8 @@ namespace AdoSamples
                         //cmd.ExecuteNonQuery();
                         //Console.Read();
 
-                        int[] rs = cmd.ExecuteNonQuery();
-                        Console.WriteLine("print result");
-                        foreach (int a in rs)
-                        {
-                            log.Info(a);
-                        }
-
+                        cmd.ExecuteNonQuery();
+                     
                         log.Info("start to select ....");
                         cmd.Parameters.Clear();
                         cmd.CommandText = "select * from t0";

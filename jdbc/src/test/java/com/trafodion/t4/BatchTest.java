@@ -16,6 +16,31 @@ public class BatchTest extends BaseTest {
 	private static final Logger log = LoggerFactory.getLogger(BatchTest.class);
 
 	@Test
+	public void insertTest() throws SQLException{
+		String create = "create table if not exists O4BQVTFXOS(QJAAFUO4BQ int,VTFXOSD28D int) NO PARTITION ";
+		Statement st = conn.createStatement();
+		st.execute(create);
+		st.close();
+		PreparedStatement ps = conn.prepareStatement("insert into O4BQVTFXOS values (?, ?)");
+		ps.setInt(1, 100);
+		ps.setInt(2, 200);
+		ps.addBatch();
+		ps.executeBatch();
+		ps.clearBatch();
+		ps.close();
+		ps = conn.prepareStatement("select * from O4BQVTFXOS where QJAAFUO4BQ = ? or VTFXOSD28D = ? ");
+		ps.setInt(1, 100);
+		ps.setInt(2, 200);
+		ps.execute();
+		ResultSet rs = ps.getResultSet();
+		while(rs.next()){
+			log.info("---"+rs.getObject(1)+","+rs.getObject(2));
+		}
+		rs.close();
+		ps.close();
+	}
+	
+	@Test
 	public void result() throws SQLException {
 		try {
 			String sql = "insert into mylocaltest.t1 values(?,?,?)";

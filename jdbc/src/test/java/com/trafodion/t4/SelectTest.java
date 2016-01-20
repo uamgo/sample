@@ -1,5 +1,6 @@
 package com.trafodion.t4;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
@@ -10,8 +11,48 @@ import org.slf4j.LoggerFactory;
 
 import com.trafodion.common.BaseTest;
 
-public class SelectTest extends BaseTest{
-private static final Logger log = LoggerFactory.getLogger(SelectTest.class);
+public class SelectTest extends BaseTest {
+	private static final Logger log = LoggerFactory.getLogger(SelectTest.class);
+
+	@Test
+	public void afterLastRow() throws Exception {
+		Statement st = null;
+		ResultSet rs = null;
+		try {
+			String sql = "select W_NAME, W_STREET_1, W_STREET_2, W_CITY, W_STATE, W_ZIP from JAVABENCH.OE_WAREHOUSE_32 where W_ID=2";
+			st = conn.createStatement();
+			rs = st.executeQuery(sql);
+			ResultSetMetaData md = rs.getMetaData();
+			while (rs.next()) {
+				for (int i = 1; i <= md.getColumnCount(); i++)
+					log.info(rs.getObject(i) + "");
+			}
+		} finally {
+			if (st != null) {
+				st.close();
+			}
+		}
+		
+		log.info("---------------------------");
+		PreparedStatement ps = null;
+		try {
+			String sql = "select W_NAME, W_STREET_1, W_STREET_2, W_CITY, W_STATE, W_ZIP from JAVABENCH.OE_WAREHOUSE_32 where W_ID=?";
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, 2);
+			rs = ps.executeQuery();
+			ResultSetMetaData md = rs.getMetaData();
+			while (rs.next()) {
+				for (int i = 1; i <= md.getColumnCount(); i++)
+					log.info(rs.getObject(i) + "");
+			}
+
+		} finally {
+			if (ps != null) {
+				ps.close();
+			}
+		}
+		
+	}
 
 	@Test
 	public void select1() throws Exception {
@@ -21,7 +62,7 @@ private static final Logger log = LoggerFactory.getLogger(SelectTest.class);
 		try {
 			st = conn.createStatement();
 			ResultSet su = st.executeQuery("values(session_user)");
-			while(su.next()){
+			while (su.next()) {
 				System.out.println(su.getObject(1));
 			}
 			su.close();

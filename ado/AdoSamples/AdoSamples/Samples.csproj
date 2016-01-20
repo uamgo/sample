@@ -59,6 +59,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="BatchInsertSample.cs" />
+    <Compile Include="DBParameterTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
