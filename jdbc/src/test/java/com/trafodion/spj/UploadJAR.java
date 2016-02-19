@@ -5,7 +5,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.CallableStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLWarning;
+import java.sql.Statement;
 import java.sql.Types;
 
 import org.junit.Test;
@@ -52,7 +55,7 @@ public class UploadJAR extends BaseTest {
 
 	@Test
 	public void upload() throws SQLException, IOException { 
-		CallableStatement pc = this.conn.prepareCall("{call DB__LIBMGR.put(?,?,?)}");
+		CallableStatement pc = this.conn.prepareCall("{call DB__LIBMGR.put(?,?,?,?)}");
 		File file = new File("d:\\lib\\spj_init.jar");
 		FileInputStream in = new FileInputStream(file);
 		byte[] b = new byte[25600];
@@ -64,8 +67,9 @@ public class UploadJAR extends BaseTest {
 			String s = new String(b, 0, len, "ISO-8859-1");
 			log.info("converted length: " + s.getBytes("ISO-8859-1").length);
 			pc.setString(1, new String(s.getBytes("ISO-8859-1"), "ISO-8859-1"));
-			pc.setString(2, file.getName()+5);
+			pc.setString(2, file.getName()+6);
 			pc.setInt(3, flag);
+			pc.setInt(4, 0);
 			pc.execute();
 			if (flag == 1) {
 				flag = 0;
@@ -75,6 +79,22 @@ public class UploadJAR extends BaseTest {
 		pc.close();
 
 		// pc.setString(1, x);
+	}
+	
+	@Test
+	public void addLib() throws SQLException{
+		try {
+			Statement st = conn.createStatement();
+			  ResultSet rs = st.executeQuery("showddl library mytest.aaaaaaaaaaaa");
+			while(rs.next()){
+				System.out.println(rs.getObject(1));
+			}
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}finally{
+			
+		}
+		
 	}
 
 	@Test

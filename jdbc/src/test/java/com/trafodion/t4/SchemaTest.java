@@ -73,7 +73,7 @@ public class SchemaTest extends BaseTest {
 	public void getIndexs() throws SQLException {
 		DatabaseMetaData md;
 		md = conn.getMetaData();
-		ResultSet indexes = md.getIndexInfo("TRAFODION", "SEABASE", "B", false, true);
+		ResultSet indexes = md.getIndexInfo("TRAFODION", "SEABASE", "%", false, true);
 		while (indexes.next()) {
 			System.out.println(indexes.getObject(1));
 		}

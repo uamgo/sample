@@ -1,8 +1,12 @@
 package com.trafodion.t4;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.junit.Test;
@@ -14,6 +18,60 @@ import com.trafodion.common.BaseTest;
 public class SelectTest extends BaseTest {
 	private static final Logger log = LoggerFactory.getLogger(SelectTest.class);
 
+	@Test
+	public void exec2in1() throws SQLException{
+		String sql = "get tables;select * from \"_MD_\".objects limit 1;";
+		conn.createStatement().execute(sql);
+	}
+	
+	@Test
+	public void executeTwice() throws SQLException{
+		 String query = "SELECT * FROM t1 WHERE id=? AND name=?";
+	        conn.setAutoCommit(true);
+	        try {
+	            PreparedStatement statement = conn.prepareStatement(query);
+	            statement.setString(1, "1");
+	            statement.setString(2, "1");
+	            ResultSet rs = statement.executeQuery();
+	            assertTrue(rs.next());
+	            assertFalse(rs.next());
+	            rs.close();
+	            // Run another query through same connection and make sure
+	            // you can't find the new row
+	            rs = statement.executeQuery();
+	            assertTrue(rs.next());
+	        } finally {
+	        }
+	}
+	
+	@Test
+	public void executeTwice2() throws SQLException{
+		 String query = "SELECT * FROM \"_MD_\".objects WHERE object_type=?";
+	        conn.setAutoCommit(true);
+	        try {
+	            PreparedStatement statement = conn.prepareStatement(query);
+	            statement.setString(1, "LB");
+	            ResultSet rs = statement.executeQuery();
+	            assertTrue(rs.next());
+//	            rs.close();
+	            // Run another query through same connection and make sure
+	            // you can't find the new row
+	            ResultSet rs2 = statement.executeQuery();
+	            assertTrue(rs2.next());
+	            boolean r1 = false;
+	            boolean r2 = false;
+	            while((r1=rs.next())
+	            		){
+//	            		||(r2 = rs2.next())){
+	            	if(r1)
+	            	System.out.println(rs.getObject(1));
+//	            	if(r2)
+//	            		System.out.println(rs2.getObject(1));
+	            }
+	        } finally {
+	        }
+	}
+	
 	@Test
 	public void afterLastRow() throws Exception {
 		Statement st = null;
