@@ -49,7 +49,7 @@ catch(EsgynDBException e)
 {  
   for(int i=0; i<e.Errors.Count; i++)  
   {  
-   Console.WriteLine(e.Errors[i]+“， ”+e.Errors[i].RowId);  
+   Console.WriteLine(e.Errors[i] + "，" + e.Errors[i].RowId);  
   }  
 }  
 ```
