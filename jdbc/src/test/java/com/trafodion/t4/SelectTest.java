@@ -19,9 +19,15 @@ public class SelectTest extends BaseTest {
 	private static final Logger log = LoggerFactory.getLogger(SelectTest.class);
 
 	@Test
-	public void exec2in1() throws SQLException{
-		String sql = "get tables;select * from \"_MD_\".objects limit 1;";
+	public void exec2in1() throws SQLException, InterruptedException{
+		String sql = "select * from \"_MD_\".objects limit 1;";
 		conn.createStatement().execute(sql);
+		System.out.println("sleeping......");
+		Thread.sleep(11*60*1000);
+		System.out.println("success1..........");
+		conn.createStatement().execute(sql);
+		System.out.println("success.....2.....");
+		
 	}
 	
 	@Test
