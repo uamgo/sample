@@ -8,7 +8,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AdoSamples</RootNamespace>
     <AssemblyName>AdoSamples</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -16,6 +16,7 @@
     <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\$(VisualStudioVersion)\UITestExtensionPackages</ReferencePath>
     <IsCodedUITest>False</IsCodedUITest>
     <TestProjectType>UnitTest</TestProjectType>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -35,7 +36,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EsgynDB.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cfb872a824fb4c13, processorArchitecture=MSIL" />
+    <Reference Include="EsgynDB.Data, Version=2.1.5.0, Culture=neutral, PublicKeyToken=cfb872a824fb4c13, processorArchitecture=MSIL" />
     <Reference Include="log4net">
       <HintPath>..\..\..\..\lib\log4net-1.2.13\bin\net\3.5\release\log4net.dll</HintPath>
     </Reference>
@@ -44,6 +45,7 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.XML" />
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -60,6 +62,7 @@
   <ItemGroup>
     <Compile Include="BatchInsertSample.cs" />
     <Compile Include="CQDSamples.cs" />
+    <Compile Include="DBConnectionTest.cs" />
     <Compile Include="DBParameterTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
