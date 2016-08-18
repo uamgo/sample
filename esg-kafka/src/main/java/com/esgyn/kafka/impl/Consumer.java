@@ -1,4 +1,4 @@
-package com.esgyn.kafka;
+package com.esgyn.kafka.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

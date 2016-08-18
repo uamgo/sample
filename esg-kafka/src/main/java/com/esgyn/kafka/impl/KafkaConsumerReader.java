@@ -1,4 +1,4 @@
-package com.esgyn.kafka;
+package com.esgyn.kafka.impl;
 
 import kafka.api.FetchRequest;
 import kafka.api.FetchRequestBuilder;
@@ -15,8 +15,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.esgyn.model.Metric;
+
+import esgyn.kafka.KafkaConsumer;
  
-public class KafkaConsumerReader {
+public class KafkaConsumerReader implements KafkaConsumer {
     public static void main(String args[]) {
         KafkaConsumerReader reader = new KafkaConsumerReader();
         String topic = args[0];
@@ -25,7 +29,7 @@ public class KafkaConsumerReader {
         seeds.add(args[2]);
         int port = Integer.parseInt(args[3]);
         try {
-            reader.run(topic, partition, seeds, port);
+            reader.readJsonFromKafka(topic, partition, seeds, port);
         } catch (Exception e) {
             System.out.println("Oops:" + e);
              e.printStackTrace();
@@ -38,7 +42,7 @@ public class KafkaConsumerReader {
         m_replicaBrokers = new ArrayList<String>();
     }
  
-    public void run(String a_topic, int a_partition, List<String> a_seedBrokers, int a_port) throws Exception {
+    public void readJsonFromKafka(String a_topic, int a_partition, List<String> a_seedBrokers, int a_port) throws Exception {
         // find the meta data about the topic and partition we are interested in
         //
         PartitionMetadata metadata = findLeader(a_seedBrokers, a_port, a_topic, a_partition);
@@ -190,4 +194,9 @@ public class KafkaConsumerReader {
         }
         return returnMetaData;
     }
+
+	public void insertTrafodion(Metric metric) {
+		// TODO Auto-generated method stub
+		
+	}
 }
