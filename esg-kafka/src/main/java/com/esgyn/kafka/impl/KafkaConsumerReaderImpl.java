@@ -16,12 +16,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.codehaus.jettison.json.JSONObject;
+import org.codehaus.jettison.json.JSONTokener;
+
 import com.esgyn.model.Metric;
 
 import esgyn.kafka.KafkaConsumerReader;
  
 public class KafkaConsumerReaderImpl implements KafkaConsumerReader {
     public static void main(String args[]) {
+    	KafkaProducer.produce();
         KafkaConsumerReader reader = new KafkaConsumerReaderImpl();
         String topic = args[0];
         int partition = Integer.parseInt(args[1]);
@@ -90,6 +94,7 @@ public class KafkaConsumerReaderImpl implements KafkaConsumerReader {
             numErrors = 0;
  
             long numRead = 0;
+            String messge="";
             for (MessageAndOffset messageAndOffset : fetchResponse.messageSet(a_topic, a_partition)) {
                 long currentOffset = messageAndOffset.offset();
                 if (currentOffset < readOffset) {
@@ -101,15 +106,19 @@ public class KafkaConsumerReaderImpl implements KafkaConsumerReader {
  
                 byte[] bytes = new byte[payload.limit()];
                 payload.get(bytes);
-                System.out.println(String.valueOf(messageAndOffset.offset()) + ": " + new String(bytes, "UTF-8"));
+                System.out.println("print received message here: " + String.valueOf(messageAndOffset.offset()) + ": " + new String(bytes, "UTF-8"));
                 numRead++;
+                messge=messge+ new String(bytes);
             }
- 
             if (numRead == 0) {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException ie) {
                 }
+            }else{
+            	JSONTokener tokener = new JSONTokener(messge);
+            	JSONObject obj = new JSONObject(tokener);
+            	System.out.println("print jsonObj MetricsName value here: " +obj.get("name")+"; "+obj.get("words"));
             }
         }
         if (consumer != null) consumer.close();
