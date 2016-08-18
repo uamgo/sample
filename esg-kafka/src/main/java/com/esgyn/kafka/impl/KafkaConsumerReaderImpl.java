@@ -18,11 +18,11 @@ import java.util.Map;
 
 import com.esgyn.model.Metric;
 
-import esgyn.kafka.KafkaConsumer;
+import esgyn.kafka.KafkaConsumerReader;
  
-public class KafkaConsumerReader implements KafkaConsumer {
+public class KafkaConsumerReaderImpl implements KafkaConsumerReader {
     public static void main(String args[]) {
-        KafkaConsumerReader reader = new KafkaConsumerReader();
+        KafkaConsumerReader reader = new KafkaConsumerReaderImpl();
         String topic = args[0];
         int partition = Integer.parseInt(args[1]);
         List<String> seeds = new ArrayList<String>();
@@ -38,7 +38,7 @@ public class KafkaConsumerReader implements KafkaConsumer {
  
     private List<String> m_replicaBrokers = new ArrayList<String>();
  
-    public KafkaConsumerReader() {
+    public KafkaConsumerReaderImpl() {
         m_replicaBrokers = new ArrayList<String>();
     }
  
@@ -194,7 +194,7 @@ public class KafkaConsumerReader implements KafkaConsumer {
         }
         return returnMetaData;
     }
-
+    
 	public void insertTrafodion(Metric metric) {
 		// TODO Auto-generated method stub
 		
