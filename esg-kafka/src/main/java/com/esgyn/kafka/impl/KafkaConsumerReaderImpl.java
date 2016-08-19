@@ -10,16 +10,19 @@ import kafka.javaapi.consumer.SimpleConsumer;
 import kafka.message.MessageAndOffset;
 
 import java.nio.ByteBuffer;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.codehaus.jettison.json.JSONTokener;
-
-import com.esgyn.model.Metric;
 
 import esgyn.kafka.KafkaConsumerReader;
 
@@ -139,8 +142,8 @@ public class KafkaConsumerReaderImpl implements KafkaConsumerReader {
 			} else {
 				JSONTokener tokener = new JSONTokener(messge);
 				JSONObject obj = new JSONObject(tokener);
-				System.out
-						.println("print jsonObj MetricsName value here: " + obj.get("name") + "; " + obj.get("words"));
+				insertTrafodion(obj);
+				System.out.println("print jsonObj MetricsName value here: " + obj.get("MetricsTimestamp") + "; " + obj.get("MetricsName"));
 			}
 		}
 		if (consumer != null)
@@ -230,8 +233,41 @@ public class KafkaConsumerReaderImpl implements KafkaConsumerReader {
 		return returnMetaData;
 	}
 
-	public void insertTrafodion(Metric metric) {
+	public void insertTrafodion(JSONObject obj) {
 		// TODO Auto-generated method stub
+		Connection cnn=null;
+		PreparedStatement stmt=null;
+		try {
+				Class.forName("org.trafodion.jdbc.t4.T4Driver");
+				cnn=DriverManager.getConnection("jdbc:t4jdbc://10.10.10.8:23400/:","trafodion","traf123");
+				stmt=cnn.prepareStatement("Insert into alex.metrics values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+				stmt.setString(0, obj.getString("MetricsName"));
+				stmt.setString(1, obj.getString("MetricsValue"));
+				stmt.setString(2, obj.getString("MetricsTimestamp"));
+				stmt.setString(3, obj.getString("container_base_image"));
+				stmt.setString(4, obj.getString("container_name"));
+				stmt.setString(5, obj.getString("host_id"));
+				stmt.setString(6, obj.getString("hostname"));
+				stmt.setString(7, obj.getString("labels"));
+				stmt.setString(8, obj.getString("namespace_id"));
+				stmt.setString(9, obj.getString("namespace_name"));
+				stmt.setString(10, obj.getString("nodename"));
+				stmt.setString(11, obj.getString("pod_id"));
+				stmt.setString(12, obj.getString("pod_name"));
+				stmt.setString(13, obj.getString("pod_namespace"));
+				stmt.setString(14, obj.getString("type"));
+				stmt.execute();
+				System.out.println("the json object inserted into trafodion successfully!");
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 }

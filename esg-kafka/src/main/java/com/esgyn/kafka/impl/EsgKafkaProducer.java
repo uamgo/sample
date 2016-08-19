@@ -10,6 +10,7 @@ public class EsgKafkaProducer {
 		props.put("bootstrap.servers", "192.168.0.34:9092");
 		props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 		props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+
 		// props.put("serializer.class", "com.esgyn.kafka.impl.JsonEncoder");
 //		props.put("partitioner.class", "com.esgyn.kafka.impl.SimplePartitioner");
 		props.put("acks", "1");
