@@ -31,7 +31,7 @@ public class KConsumerImpl implements KConsumer {
 		while (true) {
 			log.warn("go...");
 			System.out.println("goo...");
-			ConsumerRecords<String, String> records = consumer.poll(50000);
+			ConsumerRecords<String, String> records = consumer.poll(10000);
 			if (records == null) {
 				try {
 					System.out.println("sleep ...");
@@ -44,11 +44,13 @@ public class KConsumerImpl implements KConsumer {
 
 				try {
 					System.out
-							.println("Received message: (" + r.key() + ", " + r.value() + ") at offset " + r.offset());
+							.println("offset:" + r.offset() + ", Received message: (" + r.key() + ", " + r.value()
+									+ ") ");
 				} catch (Exception e) {
 					log.error(e.getMessage(), e);
 				}
 			}
+			consumer.commitSync();
 		}
 	}
 

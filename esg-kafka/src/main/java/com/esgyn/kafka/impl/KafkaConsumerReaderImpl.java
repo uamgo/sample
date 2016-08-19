@@ -28,7 +28,6 @@ import esgyn.kafka.KafkaConsumerReader;
 
 public class KafkaConsumerReaderImpl implements KafkaConsumerReader {
 	public static void main(String args[]) {
-		EsgKafkaProducer.produce();
 		KafkaConsumerReader reader = new KafkaConsumerReaderImpl();
 		String topic = args[0];
 		int partition = Integer.parseInt(args[1]);
@@ -241,21 +240,22 @@ public class KafkaConsumerReaderImpl implements KafkaConsumerReader {
 				Class.forName("org.trafodion.jdbc.t4.T4Driver");
 				cnn=DriverManager.getConnection("jdbc:t4jdbc://10.10.10.8:23400/:","trafodion","traf123");
 				stmt=cnn.prepareStatement("Insert into alex.metrics values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
-				stmt.setString(0, obj.getString("MetricsName"));
-				stmt.setString(1, obj.getString("MetricsValue"));
-				stmt.setString(2, obj.getString("MetricsTimestamp"));
-				stmt.setString(3, obj.getString("container_base_image"));
-				stmt.setString(4, obj.getString("container_name"));
-				stmt.setString(5, obj.getString("host_id"));
-				stmt.setString(6, obj.getString("hostname"));
-				stmt.setString(7, obj.getString("labels"));
-				stmt.setString(8, obj.getString("namespace_id"));
-				stmt.setString(9, obj.getString("namespace_name"));
-				stmt.setString(10, obj.getString("nodename"));
-				stmt.setString(11, obj.getString("pod_id"));
-				stmt.setString(12, obj.getString("pod_name"));
-				stmt.setString(13, obj.getString("pod_namespace"));
-				stmt.setString(14, obj.getString("type"));
+				stmt.setString(1, obj.getString("MetricsName"));
+				stmt.setInt(2, obj.getJSONObject("MetricsValue").getInt("value"));
+				stmt.setString(3, obj.getString("MetricsTimestamp"));
+				JSONObject MetricsTags=obj.getJSONObject("MetricsTags");
+				stmt.setString(4, MetricsTags.getString("container_base_image"));
+				stmt.setString(5, MetricsTags.getString("container_name"));
+				stmt.setString(6, MetricsTags.getString("host_id"));
+				stmt.setString(7, MetricsTags.getString("hostname"));
+				stmt.setString(8, MetricsTags.getString("labels"));
+				stmt.setString(9, MetricsTags.getString("namespace_id"));
+				stmt.setString(10, MetricsTags.getString("namespace_name"));
+				stmt.setString(11, MetricsTags.getString("nodename"));
+				stmt.setString(12, MetricsTags.getString("pod_id"));
+				stmt.setString(13, MetricsTags.getString("pod_name"));
+				stmt.setString(14, MetricsTags.getString("pod_namespace"));
+				stmt.setString(15, MetricsTags.getString("type"));
 				stmt.execute();
 				System.out.println("the json object inserted into trafodion successfully!");
 		} catch (ClassNotFoundException e) {
