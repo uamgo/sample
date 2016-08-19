@@ -223,9 +223,9 @@ public class KafkaConsumerReaderImpl implements KafkaConsumerReader {
 		}
 		if (returnMetaData != null) {
 			m_replicaBrokers.clear();
-			for (kafka.cluster.Broker replica : returnMetaData.replicas()) {
-				m_replicaBrokers.add(replica.host());
-			}
+//			for (kafka.cluster.Broker replica : returnMetaData.replicas()) {
+//				m_replicaBrokers.add(replica.host());
+//			}
 		}
 		return returnMetaData;
 	}

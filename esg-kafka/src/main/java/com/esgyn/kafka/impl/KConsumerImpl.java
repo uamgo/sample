@@ -1,5 +1,6 @@
 package com.esgyn.kafka.impl;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -21,17 +22,17 @@ public class KConsumerImpl implements KConsumer {
 
 		consumer = new KafkaConsumer<>(config);
 		this.topic = config.getProperty("topic", "null");
-		System.out.println("topic:"+this.topic);
+		System.out.println("topic:" + this.topic);
 	}
 
 	public void start() {
-		consumer.subscribe(this.topic);
-		
+		consumer.subscribe(Arrays.asList(topic));
+
 		while (true) {
 			log.warn("go...");
 			System.out.println("goo...");
-			Map<String, ConsumerRecords<String, String>> map = consumer.poll(0);
-			if(map == null){
+			ConsumerRecords<String, String> records = consumer.poll(50000);
+			if (records == null) {
 				try {
 					System.out.println("sleep ...");
 					Thread.sleep(2000);
@@ -39,15 +40,13 @@ public class KConsumerImpl implements KConsumer {
 				}
 				continue;
 			}
-			log.info(map.size() + "___");
-			for (Entry<String, ConsumerRecords<String, String>> records : map.entrySet()) {
-				for (ConsumerRecord<String, String> r : records.getValue().records()) {
+			for (ConsumerRecord<String, String> r : records) {
 
-					try {
-						System.out.println("Received message: (" + r.key() + ", " + r.value() + ") at offset " + r.offset());
-					} catch (Exception e) {
-						log.error(e.getMessage(), e);
-					}
+				try {
+					System.out
+							.println("Received message: (" + r.key() + ", " + r.value() + ") at offset " + r.offset());
+				} catch (Exception e) {
+					log.error(e.getMessage(), e);
 				}
 			}
 		}
