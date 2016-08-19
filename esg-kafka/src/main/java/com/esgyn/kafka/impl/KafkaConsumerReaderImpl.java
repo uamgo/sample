@@ -24,7 +24,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.codehaus.jettison.json.JSONTokener;
 
-import esgyn.kafka.KafkaConsumerReader;
+import com.esgyn.kafka.KafkaConsumerReader;
 
 public class KafkaConsumerReaderImpl implements KafkaConsumerReader {
 	public static void main(String args[]) {
@@ -225,9 +225,9 @@ public class KafkaConsumerReaderImpl implements KafkaConsumerReader {
 		}
 		if (returnMetaData != null) {
 			m_replicaBrokers.clear();
-			for (kafka.cluster.Broker replica : returnMetaData.replicas()) {
-				m_replicaBrokers.add(replica.host());
-			}
+//			for (kafka.cluster.Broker replica : returnMetaData.replicas()) {
+//				m_replicaBrokers.add(replica.host());
+//			}
 		}
 		return returnMetaData;
 	}

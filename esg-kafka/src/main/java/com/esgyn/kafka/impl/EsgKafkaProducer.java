@@ -1,18 +1,16 @@
 package com.esgyn.kafka.impl;
 
-import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Properties;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
-import kafka.utils.Utils;
-
 public class EsgKafkaProducer {
-	public static void produce() throws URISyntaxException {
-		Properties p = Utils.loadProps(
-				new File(EsgKafkaProducer.class.getResource("/config.properties").toURI()).getAbsolutePath());
+	public static void produce() throws URISyntaxException, IOException {
+		Properties p = new Properties();
+		p.load(EsgKafkaProducer.class.getResource("/config.properties").openStream());
 		Properties props = new Properties();
 		props.put("bootstrap.servers", p.getProperty("bootstrap.servers", "192.168.0.34:9092"));
 		props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
@@ -48,12 +46,11 @@ public class EsgKafkaProducer {
 		String topic = "topic1";
 		ProducerRecord<String, String> record = new ProducerRecord<String, String>(topic, smsg);
 		producer.send(record);
-
 		producer.close();
 		System.out.println("success");
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws URISyntaxException, IOException {
 		produce();
 	}
 }
