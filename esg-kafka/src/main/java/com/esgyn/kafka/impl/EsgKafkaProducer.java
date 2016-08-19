@@ -2,21 +2,19 @@ package com.esgyn.kafka.impl;
 
 import java.util.Properties;
 
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerRecord;
 
-import kafka.javaapi.producer.Producer;
-import kafka.producer.KeyedMessage;
-import kafka.producer.ProducerConfig;
-
-public class KafkaProducer {
+public class EsgKafkaProducer {
 	public static void produce() {
 		Properties props = new Properties();
-		props.put("metadata.broker.list", "localhost:9092");
-		props.put("serializer.class", "kafka.serializer.StringEncoder");
+		props.put("bootstrap.servers", "192.168.0.34:9092");
+		props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+		props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 		// props.put("serializer.class", "com.esgyn.kafka.impl.JsonEncoder");
 //		props.put("partitioner.class", "com.esgyn.kafka.impl.SimplePartitioner");
-		props.put("request.required.acks", "0");
+		props.put("acks", "1");
 
-		ProducerConfig config = new ProducerConfig(props);
 		String smsg = "{																											  "+
 				"  \"MetricsName\": \"cpu/limit\",																							  "+
 				"  \"MetricsValue\": {																									  "+
@@ -39,12 +37,14 @@ public class KafkaProducer {
 				"  }																											  "+
 				"}																											  ";
 		
+		KafkaProducer<String, String> producer = new KafkaProducer<String, String>(props);
+		String topic="topic1";
+		ProducerRecord<String, String> record = new ProducerRecord<String, String>(topic, smsg);
+		producer.send(record );
 		
 		
-		Producer<String, String> producer = new Producer<String, String>(config);
-		KeyedMessage<String, String> data = new KeyedMessage<String, String>("topic2", smsg);
-		producer.send(data);
 		producer.close();
+		System.out.println("success");
 	}
 
 	public static void main(String[] args) {
