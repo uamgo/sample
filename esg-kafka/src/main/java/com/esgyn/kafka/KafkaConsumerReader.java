@@ -1,4 +1,4 @@
-package esgyn.kafka;
+package com.esgyn.kafka;
 
 import java.util.List;
 

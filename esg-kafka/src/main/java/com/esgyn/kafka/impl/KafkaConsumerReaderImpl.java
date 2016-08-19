@@ -24,7 +24,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.codehaus.jettison.json.JSONTokener;
 
-import esgyn.kafka.KafkaConsumerReader;
+import com.esgyn.kafka.KafkaConsumerReader;
 
 public class KafkaConsumerReaderImpl implements KafkaConsumerReader {
 	public static void main(String args[]) {
