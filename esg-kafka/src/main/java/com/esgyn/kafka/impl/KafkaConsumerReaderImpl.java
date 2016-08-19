@@ -25,7 +25,7 @@ import esgyn.kafka.KafkaConsumerReader;
 
 public class KafkaConsumerReaderImpl implements KafkaConsumerReader {
 	public static void main(String args[]) {
-		KafkaProducer.produce();
+		EsgKafkaProducer.produce();
 		KafkaConsumerReader reader = new KafkaConsumerReaderImpl();
 		String topic = args[0];
 		int partition = Integer.parseInt(args[1]);
