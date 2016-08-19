@@ -2,10 +2,6 @@ package com.esgyn.kafka.impl;
 
 import java.util.Properties;
 
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import kafka.javaapi.producer.Producer;
 import kafka.producer.KeyedMessage;
@@ -14,7 +10,7 @@ import kafka.producer.ProducerConfig;
 public class KafkaProducer {
 	public static void produce() {
 		Properties props = new Properties();
-		props.put("metadata.broker.list", "10.10.10.136:9092");
+		props.put("metadata.broker.list", "localhost:9092");
 		props.put("serializer.class", "kafka.serializer.StringEncoder");
 		// props.put("serializer.class", "com.esgyn.kafka.impl.JsonEncoder");
 //		props.put("partitioner.class", "com.esgyn.kafka.impl.SimplePartitioner");
@@ -46,7 +42,7 @@ public class KafkaProducer {
 		
 		
 		Producer<String, String> producer = new Producer<String, String>(config);
-		KeyedMessage<String, String> data = new KeyedMessage<String, String>("topic1", smsg);
+		KeyedMessage<String, String> data = new KeyedMessage<String, String>("topic2", smsg);
 		producer.send(data);
 		producer.close();
 	}
