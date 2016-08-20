@@ -50,13 +50,7 @@ public class EsgDatasource {
 	public static void main(String[] args) throws SQLException, IOException {
 		Properties config = new Properties();
 		config.load(Runner.class.getResource("/config.properties").openStream());
-		Properties p = new Properties();
-		for (Entry<Object, Object> entry : config.entrySet()) {
-			if (entry.getKey().toString().startsWith("db.")) {
-				p.put(entry.getKey().toString().substring(3), entry.getValue());
-			}
-		}
-		addConfig(p);
+		addConfig(config);
 
 		Connection conn = getConn();
 		ResultSet rs = conn.createStatement().executeQuery("values(1)");
