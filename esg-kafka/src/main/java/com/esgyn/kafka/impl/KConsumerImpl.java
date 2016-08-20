@@ -52,4 +52,16 @@ public class KConsumerImpl implements KConsumer {
 		}
 	}
 
+	@Override
+	public void commit() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public ConsumerRecords<String, String> poll(long i) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

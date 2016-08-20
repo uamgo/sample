@@ -4,34 +4,58 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.Properties;
 
 import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.esgyn.service.jdbc.EJdbc;
 import com.esgyn.service.kafka.KConsumer;
 
 public class Runner {
+	private static Logger log = LoggerFactory.getLogger(Runner.class);
 
-	public static void main(String[] args) throws FileNotFoundException, IOException, URISyntaxException {
+	public static void main(String[] args)
+			throws FileNotFoundException, IOException, URISyntaxException {
 		Properties p = new Properties();
-		String path = new File(Runner.class.getResource("/config.properties").toURI()).getAbsolutePath();
+		InputStream input = null;
 		if (args.length > 0) {
-			path = args[0];
+			try {
+				input = new FileInputStream(args[0]);
+			} catch (Exception e) {
+				log.error(e.getMessage());
+			}
 		}
-		p.load(new FileInputStream(path));
-		KConsumer consumer = new KConsumerImpl(p);
-//		try {
-//			consumer = (KConsumer) Class.forName("com.esgyn.kafka.impl.KConsumerImpl").getConstructors()[0]
-//					.newInstance(p);
-//		} catch (Exception e) {
-//
-//		}
+		if (input == null) {
+			input = Runner.class.getResource("/config.properties").openStream();
+		}
+		p.load(input);
+		
+		if(input !=null){
+			input.close();
+		}
+		String consumerImpl = p.getProperty("KConsumerImpl", "com.esgyn.kafka.impl.KConsumerImpl");
+		String jdbcImpl = p.getProperty("KConsumerImpl", "com.esgyn.kafka.impl.EJdbcImpl");
+		long pollTimeout = Integer.valueOf(p.getProperty("poll.timeout", "10000"));
+		KConsumer consumer = null;
+		try {
+			consumer = (KConsumer) Class.forName(consumerImpl).getConstructors()[0].newInstance(p);
+		} catch (Exception e) {
+			consumer = new KConsumerImpl(p);
+			log.error(e.getMessage(), e);
+		}
 		EJdbc ej = null;
-		ej.prepare(p);
+		try {
+			ej = (EJdbc) Class.forName(jdbcImpl).getConstructors()[0].newInstance(p);
+		} catch (Exception e) {
+			ej = new EJdbcImpl(p);
+			log.error(e.getMessage(), e);
+		}
 		while (true) {
-			ConsumerRecords<String, String> records = consumer.poll(10000);
+			ConsumerRecords<String, String> records = consumer.poll(pollTimeout);
 			ej.open();
 			ej.insert(records);
 			ej.close();
