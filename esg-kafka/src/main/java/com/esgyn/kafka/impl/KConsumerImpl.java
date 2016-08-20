@@ -19,8 +19,7 @@ public class KConsumerImpl implements KConsumer {
 	public KConsumerImpl(Properties config) {
 
 		consumer = new KafkaConsumer<>(config);
-		this.topic = config.getProperty("topic", "null");
-		System.out.println("topic:" + this.topic);
+		this.topic = config.getProperty("topic");
 	}
 
 	public void start() {
@@ -41,9 +40,8 @@ public class KConsumerImpl implements KConsumer {
 			for (ConsumerRecord<String, String> r : records) {
 
 				try {
-					System.out
-							.println("offset:" + r.offset() + ", Received message: (" + r.key() + ", " + r.value()
-									+ ") ");
+					System.out.println("offset:" + r.offset() + ", Received message: (" + r.key()
+							+ ", " + r.value() + ") ");
 				} catch (Exception e) {
 					log.error(e.getMessage(), e);
 				}
@@ -54,14 +52,13 @@ public class KConsumerImpl implements KConsumer {
 
 	@Override
 	public void commit() {
-		// TODO Auto-generated method stub
-		
+		consumer.commitSync();
 	}
 
 	@Override
-	public ConsumerRecords<String, String> poll(long i) {
-		// TODO Auto-generated method stub
-		return null;
+	public ConsumerRecords<String, String> poll(long timeWindow) {
+		consumer.subscribe(Arrays.asList(topic));
+		return consumer.poll(timeWindow);
 	}
 
 }

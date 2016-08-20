@@ -19,8 +19,12 @@ public class EsgDatasource {
 	private static Properties _config = new Properties();
 	private static HikariDataSource ds = null;
 
-	static void addConfig(Properties config) {
-		_config.putAll(config);
+	public static void addConfig(Properties config) {
+		for (Entry<Object, Object> entry : config.entrySet()) {
+			if (entry.getKey().toString().startsWith("db.")) {
+				_config.put(entry.getKey().toString().substring(3), entry.getValue());
+			}
+		}
 		if (ds != null) {
 			try {
 				ds.close();
@@ -28,23 +32,22 @@ public class EsgDatasource {
 				log.error(e.getMessage());
 			}
 		}
+
 		HikariConfig conf = new HikariConfig(_config);
 		ds = new HikariDataSource(conf);
 	}
 
-	static Connection getConn() throws SQLException {
+	public static Connection getConn() throws SQLException {
 		return ds.getConnection();
 	}
 
-	static void close() {
+	public static void close() {
 		if (ds != null) {
 			ds.close();
 		}
 	}
 
 	public static void main(String[] args) throws SQLException, IOException {
-		HikariConfig c = new HikariConfig();
-		
 		Properties config = new Properties();
 		config.load(Runner.class.getResource("/config.properties").openStream());
 		Properties p = new Properties();

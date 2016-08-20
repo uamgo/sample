@@ -1,15 +1,15 @@
 package com.esgyn.service.jdbc;
 
+import java.sql.SQLException;
+
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 
 public interface EJdbc {
 
-	void prepare();
+	void open() throws SQLException;
 
-	void open();
+	void insert(ConsumerRecords<String, String> records) throws Exception;
 
-	void insert(ConsumerRecords<String, String> records);
-
-	void close();
+	void close() throws SQLException;
 
 }
