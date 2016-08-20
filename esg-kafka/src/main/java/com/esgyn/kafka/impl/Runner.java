@@ -57,18 +57,24 @@ public class Runner {
 		}
 
 		EsgDatasource.addConfig(p);
+		boolean hasRecords = true;
 		while (true) {
 			ConsumerRecords<String, String> records = consumer.poll(pollTimeout);
-			ej.open();
+			hasRecords = records != null && !records.isEmpty();
 			try {
-				ej.insert(records);
-				consumer.commit();
+				if (hasRecords) {
+					ej.open();
+					ej.insert(records);
+					consumer.commit();
+				}
 			} catch (SQLException e) {
-				log.error(e.getMessage(),e);
+				log.error(e.getMessage(), e);
 			} catch (Exception e) {
-				log.error(e.getMessage(),e);
+				log.error(e.getMessage(), e);
+			} finally {
+				if (hasRecords)
+					ej.close();
 			}
-			ej.close();
 		}
 
 	}

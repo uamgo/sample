@@ -95,6 +95,8 @@ public class EJdbcImpl implements EJdbc {
 
 	@Override
 	public void insert(ConsumerRecords<String, String> records) throws Exception {
+		if(records.isEmpty())
+			return;
 		log.info("inserting ...");
 		PreparedStatement ps = this.con.prepareStatement(this.insertString);
 		for (ConsumerRecord<String, String> r : records) {
