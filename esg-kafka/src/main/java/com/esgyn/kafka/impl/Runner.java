@@ -18,6 +18,7 @@ import com.esgyn.service.kafka.KConsumer;
 
 public class Runner {
 	private static Logger log = LoggerFactory.getLogger(Runner.class);
+	private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(Runner.class);
 
 	public static void main(String[] args)
 			throws FileNotFoundException, IOException, URISyntaxException, SQLException {
@@ -36,7 +37,11 @@ public class Runner {
 		p.load(input);
 
 		if (input != null) {
-			input.close();
+			try {
+				input.close();
+			} catch (Exception e) {
+				log.warn(e.getMessage());
+			}
 		}
 		String consumerImpl = p.getProperty("KConsumerImpl", "com.esgyn.kafka.impl.KConsumerImpl");
 		String jdbcImpl = p.getProperty("EJdbcImpl", "com.esgyn.kafka.impl.EJdbcImpl");
@@ -58,7 +63,9 @@ public class Runner {
 
 		EsgDatasource.addConfig(p);
 		boolean hasRecords = true;
+		boolean hasErr = false;
 		while (true) {
+			hasErr = false;
 			ConsumerRecords<String, String> records = consumer.poll(pollTimeout);
 			hasRecords = records != null && !records.isEmpty();
 			try {
@@ -69,8 +76,10 @@ public class Runner {
 				}
 			} catch (SQLException e) {
 				log.error(e.getMessage(), e);
+				hasErr=true;
 			} catch (Exception e) {
 				log.error(e.getMessage(), e);
+				hasErr=true;
 			} finally {
 				if (hasRecords)
 					ej.close();
