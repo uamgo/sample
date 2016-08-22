@@ -20,8 +20,7 @@ public class Runner {
 	private static Logger log = LoggerFactory.getLogger(Runner.class);
 	private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(Runner.class);
 
-	public static void main(String[] args)
-			throws FileNotFoundException, IOException, URISyntaxException, SQLException {
+	public static void main(String[] args) throws FileNotFoundException, IOException, URISyntaxException, SQLException {
 		Properties p = new Properties();
 		InputStream input = null;
 		if (args.length > 0) {
@@ -72,18 +71,35 @@ public class Runner {
 				if (hasRecords) {
 					ej.open();
 					ej.insert(records);
-					throw new SQLException(); 
-					/*consumer.commit();*/
 				}
 			} catch (SQLException e) {
-				BizLog.customerLog(logger, records);
 				log.error(e.getMessage(), e);
-				hasErr=true;
+				hasErr = true;
 			} catch (Exception e) {
-				logger.log("BACKUP", null, records, e);
 				log.error(e.getMessage(), e);
-				hasErr=true;
+				hasErr = true;
 			} finally {
+				if (hasErr) {
+					BizLog.customerLog(logger, records);
+				}
+				int count = 0;
+				boolean flag = false;
+				do {
+					flag = false;
+					try {
+						consumer.commit();
+					} catch (Exception e2) {
+						flag = true;
+						++count;
+						if(count>=3){
+							log.error(e2.getMessage(),e2);
+						}
+						try {
+							Thread.sleep(3000);
+						} catch (InterruptedException e) {
+						}
+					}
+				} while (flag && count < 3);
 				if (hasRecords)
 					ej.close();
 			}

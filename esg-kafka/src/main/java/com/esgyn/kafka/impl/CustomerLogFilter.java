@@ -8,7 +8,7 @@ public class CustomerLogFilter extends Filter {
 	@Override
 	public int decide(LoggingEvent event) {
 		System.out.println("-------------"+event.getLevel());
-		if(event.getLevel().toInt() == 1000){
+		if(event.getLevel().toInt() == BizLog.BIZLEVEL){
 			return 0;
 		}
 		return -1;

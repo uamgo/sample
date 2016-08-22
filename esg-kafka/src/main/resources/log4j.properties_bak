@@ -25,4 +25,6 @@ log4j.appender.esgynLog.File=biz.log
 log4j.appender.esgynLog.layout=org.apache.log4j.PatternLayout
 log4j.appender.esgynLog.layout.ConversionPattern=[%-5p] %d(%r) --> [%t] %l: %m %x %n
 log4j.additivity.esgynLog = false
-log4j.appender.esgynLog.filter = com.esgyn.kafka.impl.CustomerLogFilter 
+appender.list.filter.threshold.type=DEBUG
+appender.list.filter.threshold.level = DEBUG
+log4j.appender.esgynLog.filter.DEBUGFilter = com.esgyn.kafka.impl.CustomerLogFilter 
