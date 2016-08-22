@@ -72,12 +72,15 @@ public class Runner {
 				if (hasRecords) {
 					ej.open();
 					ej.insert(records);
-					consumer.commit();
+					throw new SQLException(); 
+					/*consumer.commit();*/
 				}
 			} catch (SQLException e) {
+				BizLog.customerLog(logger, records);
 				log.error(e.getMessage(), e);
 				hasErr=true;
 			} catch (Exception e) {
+				logger.log("BACKUP", null, records, e);
 				log.error(e.getMessage(), e);
 				hasErr=true;
 			} finally {
