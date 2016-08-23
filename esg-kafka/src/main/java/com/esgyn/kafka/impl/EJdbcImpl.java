@@ -1,5 +1,6 @@
 package com.esgyn.kafka.impl;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -13,6 +14,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TimeZone;
 
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.slf4j.Logger;
@@ -34,8 +37,13 @@ public class EJdbcImpl implements EJdbc {
 	private Map tempMap = new HashMap();
 	private Map<String, Integer> lenMap = new HashMap<String, Integer>();
 	private SimpleDateFormat df;
+	private long offset = -1;
+	private long savedOffset;
+	private static PropertiesConfiguration offsetConfig = null;
 
-	public EJdbcImpl(Properties config) {
+	public EJdbcImpl(Properties config) throws ConfigurationException {
+		offsetConfig = new PropertiesConfiguration(new File("offset.properties"));
+		offsetConfig.setAutoSave(true);
 		EsgDatasource.addConfig(config);
 		String create_table_ddl = config.getProperty("create_table_ddl");
 		Connection conn = null;
@@ -65,8 +73,7 @@ public class EJdbcImpl implements EJdbc {
 		}
 		log.info("Done for table initialization.");
 
-		this.insert_columns = config.getProperty("insert_columns")
-				.replaceFirst("^\\s*,?(.*?),?\\s*", "$1");
+		this.insert_columns = config.getProperty("insert_columns").replaceFirst("^\\s*,?(.*?),?\\s*", "$1");
 		this.columns = this.insert_columns.split(",");
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < this.columns.length; i++) {
@@ -76,7 +83,7 @@ public class EJdbcImpl implements EJdbc {
 			}
 		}
 		this.table_to_insert = config.getProperty("table_to_insert");
-		this.insertString = "insert into " + this.table_to_insert + "(" + this.insert_columns + ")"
+		this.insertString = "upsert using load into " + this.table_to_insert + "(" + this.insert_columns + ")"
 				+ " values(" + sb.toString() + ")";
 		String[] insert_col_len_limit = config.getProperty("insert_col_len_limit").split(",");
 		for (int i = 0; i < this.columns.length; i++) {
@@ -94,12 +101,16 @@ public class EJdbcImpl implements EJdbc {
 	}
 
 	@Override
-	public void insert(ConsumerRecords<String, String> records) throws Exception {
-		if(records.isEmpty())
+	public void insert(ConsumerRecords<String, String> records, long savedOffset) throws Exception {
+		if (records.isEmpty())
 			return;
 		log.info("inserting ...");
+		this.offset = -1;
 		PreparedStatement ps = this.con.prepareStatement(this.insertString);
 		for (ConsumerRecord<String, String> r : records) {
+			if (savedOffset >= r.offset()) {
+				continue;
+			}
 			try {
 				this.tempMap.clear();
 				JsonNode root = null;
@@ -138,20 +149,16 @@ public class EJdbcImpl implements EJdbc {
 				if (MetricsTagsNode != null) {
 					container_base_image = massage("container_base_image",
 							readNode(MetricsTagsNode, "container_base_image"));
-					container_name = massage("container_name",
-							readNode(MetricsTagsNode, "container_name"));
+					container_name = massage("container_name", readNode(MetricsTagsNode, "container_name"));
 					host_id = massage("host_id", readNode(MetricsTagsNode, "host_id "));
 					hostname = massage("hostname", readNode(MetricsTagsNode, "hostname"));
 					labels = massage("labels", readNode(MetricsTagsNode, "labels"));
-					namespace_id = massage("namespace_id",
-							readNode(MetricsTagsNode, "namespace_id"));
-					namespace_name = massage("namespace_name",
-							readNode(MetricsTagsNode, "namespace_name"));
+					namespace_id = massage("namespace_id", readNode(MetricsTagsNode, "namespace_id"));
+					namespace_name = massage("namespace_name", readNode(MetricsTagsNode, "namespace_name"));
 					nodename = massage("nodename", readNode(MetricsTagsNode, "nodename"));
 					pod_id = massage("pod_id", readNode(MetricsTagsNode, "pod_id"));
 					pod_name = massage("pod_name", readNode(MetricsTagsNode, "pod_name"));
-					pod_namespace = massage("pod_namespace",
-							readNode(MetricsTagsNode, "pod_namespace"));
+					pod_namespace = massage("pod_namespace", readNode(MetricsTagsNode, "pod_namespace"));
 					type = massage("type", readNode(MetricsTagsNode, "type"));
 				}
 				this.tempMap.put("MetricsName", MetricsName);
@@ -179,6 +186,7 @@ public class EJdbcImpl implements EJdbc {
 				log.error("[Message]" + r.value(), e);
 				continue;
 			}
+			offset = r.offset();
 		}
 		ps.executeBatch();
 		try {
@@ -188,6 +196,11 @@ public class EJdbcImpl implements EJdbc {
 		}
 		log.debug("Done for insertion.");
 
+	}
+
+	@Override
+	public long getCurrentOffset() {
+		return this.offset;
 	}
 
 	private Timestamp toTimestamp(String timeString) throws ParseException {

@@ -41,7 +41,7 @@ public class EsgKafkaProducer {
 				+ "    \"type\": \"pod_container\"																							  "
 				+ "  }																											  "
 				+ "}																											  ";
-
+		smsg = "ccccccccccccccccccccccccccccccccc";
 		KafkaProducer<String, String> producer = new KafkaProducer<String, String>(props);
 		String topic = "topic1";
 		ProducerRecord<String, String> record = new ProducerRecord<String, String>(topic, smsg);

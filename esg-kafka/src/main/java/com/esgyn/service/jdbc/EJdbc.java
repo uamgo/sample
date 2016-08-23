@@ -8,8 +8,10 @@ public interface EJdbc {
 
 	void open() throws SQLException;
 
-	void insert(ConsumerRecords<String, String> records) throws Exception;
-
 	void close() throws SQLException;
+
+	long getCurrentOffset();
+
+	void insert(ConsumerRecords<String, String> records, long savedOffset) throws Exception;
 
 }

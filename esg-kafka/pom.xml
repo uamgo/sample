@@ -29,8 +29,14 @@
 		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12 -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId> 
+			<artifactId>slf4j-log4j12</artifactId>
 			<version>1.7.21</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/commons-configuration/commons-configuration -->
+		<dependency>
+			<groupId>commons-configuration</groupId>
+			<artifactId>commons-configuration</artifactId>
+			<version>1.10</version>
 		</dependency>
 
 
@@ -110,7 +116,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass>com.esgyn.kafka.impl.KafkaConsumerReaderImpl</mainClass>
+							<mainClass>com.esgyn.kafka.impl.Runner</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

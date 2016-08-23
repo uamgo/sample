@@ -8,10 +8,12 @@ import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.Properties;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.esgyn.kafka.tools.SaveTool;
 import com.esgyn.service.jdbc.EJdbc;
 import com.esgyn.service.jdbc.EsgDatasource;
 import com.esgyn.service.kafka.KConsumer;
@@ -20,7 +22,8 @@ public class Runner {
 	private static Logger log = LoggerFactory.getLogger(Runner.class);
 	private static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(Runner.class);
 
-	public static void main(String[] args) throws FileNotFoundException, IOException, URISyntaxException, SQLException {
+	public static void main(String[] args)
+			throws FileNotFoundException, IOException, URISyntaxException, SQLException, ConfigurationException {
 		Properties p = new Properties();
 		InputStream input = null;
 		if (args.length > 0) {
@@ -59,18 +62,25 @@ public class Runner {
 			ej = new EJdbcImpl(p);
 			log.error(e.getMessage(), e);
 		}
+		SaveTool st = new SaveTool();
 
 		EsgDatasource.addConfig(p);
 		boolean hasRecords = true;
 		boolean hasErr = false;
 		while (true) {
+			if (st.isStop()) {
+				log.warn("Current job will be stopped in a second!");
+				System.exit(0);
+			}
+
 			hasErr = false;
 			ConsumerRecords<String, String> records = consumer.poll(pollTimeout);
 			hasRecords = records != null && !records.isEmpty();
 			try {
 				if (hasRecords) {
+					long savedOffset = st.getSavedOffset();
 					ej.open();
-					ej.insert(records);
+					ej.insert(records, savedOffset);
 				}
 			} catch (SQLException e) {
 				log.error(e.getMessage(), e);
@@ -91,8 +101,12 @@ public class Runner {
 					} catch (Exception e2) {
 						flag = true;
 						++count;
-						if(count>=3){
-							log.error(e2.getMessage(),e2);
+						if (count >= 3) {
+							log.error("[offset: " + ej.getCurrentOffset() + "]", e2);
+							// if insertion is success, but commit failed, then
+							// save offset
+							if (!hasErr)
+								st.saveOffset(ej.getCurrentOffset());
 						}
 						try {
 							Thread.sleep(3000);
@@ -101,7 +115,15 @@ public class Runner {
 					}
 				} while (flag && count < 3);
 				if (hasRecords)
-					ej.close();
+					try {
+						ej.close();
+					} catch (Exception e) {
+						log.error("Something wrong with the connection, will sleep 5 secords", e);
+						try {
+							Thread.sleep(5000);
+						} catch (InterruptedException e1) {
+						}
+					}
 			}
 		}
 
