@@ -54,7 +54,6 @@ public class KConsumerImpl implements KConsumer {
 	public void commit() {
 		consumer.commitSync();
 	}
-
 	@Override
 	public ConsumerRecords<String, String> poll(long timeWindow) {
 		consumer.subscribe(Arrays.asList(topic));

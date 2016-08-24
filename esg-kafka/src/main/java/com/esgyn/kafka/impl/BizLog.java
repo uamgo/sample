@@ -1,5 +1,8 @@
 package com.esgyn.kafka.impl;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.log4j.Level;
@@ -32,10 +35,17 @@ public class BizLog {
 	 * @param logger
 	 * @param objLogInfo
 	 */
-	public static void customerLog(Logger logger, ConsumerRecords<String, String> records) {
+	public static void customerLog(Logger logger, ConsumerRecords<String, String> records,List<String> offset) {
 		for (ConsumerRecord<String, String> r : records) {
-			logger.log(CustomerLevel, r.value());
+			if(!offset.contains(String.valueOf(r.offset()))){
+				logger.log(CustomerLevel, r.value());
+			}
 		}
+	}
+
+	public static void customerLog(Logger logger, String value) {
+		// TODO Auto-generated method stub
+		logger.log(CustomerLevel, value);
 	}
 
 }

@@ -8,17 +8,18 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TimeZone;
 
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.slf4j.Logger;
+import org.apache.log4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.esgyn.service.jdbc.EJdbc;
@@ -27,7 +28,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class EJdbcImpl implements EJdbc {
-	private static Logger log = LoggerFactory.getLogger(EJdbcImpl.class);
+	private static org.slf4j.Logger log = LoggerFactory.getLogger(EJdbcImpl.class);
 	private Connection con;
 	private ObjectMapper mapper;
 	private String table_to_insert;
@@ -38,12 +39,12 @@ public class EJdbcImpl implements EJdbc {
 	private Map<String, Integer> lenMap = new HashMap<String, Integer>();
 	private SimpleDateFormat df;
 	private long offset = -1;
-	private long savedOffset;
-	private static PropertiesConfiguration offsetConfig = null;
-
+	private List<String> offsetList = new ArrayList<String>();
+	@Override
+	public List<String> getOffsetList() {
+		return offsetList;
+	}
 	public EJdbcImpl(Properties config) throws ConfigurationException {
-		offsetConfig = new PropertiesConfiguration(new File("offset.properties"));
-		offsetConfig.setAutoSave(true);
 		EsgDatasource.addConfig(config);
 		String create_table_ddl = config.getProperty("create_table_ddl");
 		Connection conn = null;
@@ -101,7 +102,7 @@ public class EJdbcImpl implements EJdbc {
 	}
 
 	@Override
-	public void insert(ConsumerRecords<String, String> records, long savedOffset) throws Exception {
+	public void insert(ConsumerRecords<String, String> records, long savedOffset,Logger logger) throws Exception {
 		if (records.isEmpty())
 			return;
 		log.info("inserting ...");
@@ -118,6 +119,8 @@ public class EJdbcImpl implements EJdbc {
 					root = mapper.readTree(r.value());
 					log.info("[" + r.offset() + "]" + r.value());
 				} catch (Exception e) {
+					offsetList.add(String.valueOf(r.offset()));
+					BizLog.customerLog(logger, r.value().trim());
 					log.error("[Message]" + r.value(), e);
 					continue;
 				}

@@ -62,7 +62,7 @@ public class Runner {
 			ej = new EJdbcImpl(p);
 			log.error(e.getMessage(), e);
 		}
-		SaveTool st = new SaveTool();
+		SaveTool st = new SaveTool(p);
 
 		EsgDatasource.addConfig(p);
 		boolean hasRecords = true;
@@ -74,13 +74,14 @@ public class Runner {
 			}
 
 			hasErr = false;
+			/*consumer.seek(partition,offset);*/
 			ConsumerRecords<String, String> records = consumer.poll(pollTimeout);
 			hasRecords = records != null && !records.isEmpty();
 			try {
 				if (hasRecords) {
 					long savedOffset = st.getSavedOffset();
 					ej.open();
-					ej.insert(records, savedOffset);
+					ej.insert(records, savedOffset,logger);
 				}
 			} catch (SQLException e) {
 				log.error(e.getMessage(), e);
@@ -90,7 +91,7 @@ public class Runner {
 				hasErr = true;
 			} finally {
 				if (hasErr) {
-					BizLog.customerLog(logger, records);
+					BizLog.customerLog(logger, records,ej.getOffsetList());
 				}
 				int count = 0;
 				boolean flag = false;

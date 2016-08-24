@@ -1,8 +1,10 @@
 package com.esgyn.service.jdbc;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.log4j.Logger;
 
 public interface EJdbc {
 
@@ -12,6 +14,8 @@ public interface EJdbc {
 
 	long getCurrentOffset();
 
-	void insert(ConsumerRecords<String, String> records, long savedOffset) throws Exception;
+	public List<String> getOffsetList();
+
+	void insert(ConsumerRecords<String, String> records, long savedOffset, Logger logger) throws Exception;
 
 }

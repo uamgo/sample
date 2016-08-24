@@ -1,6 +1,7 @@
 package com.esgyn.kafka.tools;
 
 import java.io.File;
+import java.util.Properties;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -12,13 +13,18 @@ public class SaveTool {
 	private PropertiesConfiguration offsetConfig;
 	private PropertiesConfiguration switcher;
 
-	public SaveTool() throws ConfigurationException {
-		offsetConfig = new PropertiesConfiguration(new File("config/offset.properties"));
+	public SaveTool(Properties p) throws ConfigurationException {
+		offsetConfig = new PropertiesConfiguration(new File(p.getProperty("offset")));
 		offsetConfig.setAutoSave(false);
-		log.warn("base path for offsetConfig:"+offsetConfig.getBasePath());
-		switcher = new PropertiesConfiguration(new File("config/status.properties"));
-		log.warn("base path for switcher:"+switcher.getBasePath());
-		switcher.save();
+		log.warn("base path for offsetConfig:" + offsetConfig.getBasePath());
+		/*
+		 * switcher = new PropertiesConfiguration(new
+		 * File("config/status.properties"));
+		 */
+		/*
+		 * log.warn("base path for switcher:"+switcher.getBasePath());
+		 * switcher.save();
+		 */
 	}
 
 	public long getSavedOffset() throws ConfigurationException {
@@ -27,8 +33,8 @@ public class SaveTool {
 	}
 
 	public boolean isStop() throws ConfigurationException {
-		switcher.refresh();
-		return switcher.getString("status","start").trim().toLowerCase().equals("stop");
+		offsetConfig.refresh();
+		return offsetConfig.getString("status", "start").trim().toLowerCase().equals("stop");
 	}
 
 	public void saveOffset(long currentOffset) throws ConfigurationException {
