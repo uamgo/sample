@@ -38,7 +38,7 @@ public class EJdbcImpl implements EJdbc {
 	private Map tempMap = new HashMap();
 	private Map<String, Integer> lenMap = new HashMap<String, Integer>();
 	private SimpleDateFormat df;
-	private long offset = -1;
+	private Map<Integer,String> offsetMap = new HashMap<Integer,String>();
 	private List<String> offsetList = new ArrayList<String>();
 	@Override
 	public List<String> getOffsetList() {
@@ -102,16 +102,16 @@ public class EJdbcImpl implements EJdbc {
 	}
 
 	@Override
-	public void insert(ConsumerRecords<String, String> records, long savedOffset,Logger logger) throws Exception {
+	public void insert(ConsumerRecords<String, String> records,Logger logger) throws Exception {
 		if (records.isEmpty())
 			return;
 		log.info("inserting ...");
-		this.offset = -1;
+		this.offsetMap.clear();
 		PreparedStatement ps = this.con.prepareStatement(this.insertString);
 		for (ConsumerRecord<String, String> r : records) {
-			if (savedOffset >= r.offset()) {
+			/*if (savedOffset >= r.offset()) {
 				continue;
-			}
+			}*/
 			try {
 				this.tempMap.clear();
 				JsonNode root = null;
@@ -189,7 +189,7 @@ public class EJdbcImpl implements EJdbc {
 				log.error("[Message]" + r.value(), e);
 				continue;
 			}
-			offset = r.offset();
+			this.offsetMap.put(Integer.valueOf(r.partition()), String.valueOf(r.offset()));
 		}
 		ps.executeBatch();
 		try {
@@ -202,8 +202,8 @@ public class EJdbcImpl implements EJdbc {
 	}
 
 	@Override
-	public long getCurrentOffset() {
-		return this.offset;
+	public Map<Integer, String> getCurrentOffset() {
+		return this.offsetMap;
 	}
 
 	private Timestamp toTimestamp(String timeString) throws ParseException {

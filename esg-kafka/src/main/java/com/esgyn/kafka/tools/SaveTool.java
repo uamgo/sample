@@ -1,6 +1,9 @@
 package com.esgyn.kafka.tools;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.configuration.ConfigurationException;
@@ -17,29 +20,51 @@ public class SaveTool {
 		offsetConfig = new PropertiesConfiguration(new File(p.getProperty("offset")));
 		offsetConfig.setAutoSave(false);
 		log.warn("base path for offsetConfig:" + offsetConfig.getBasePath());
-		/*
-		 * switcher = new PropertiesConfiguration(new
-		 * File("config/status.properties"));
-		 */
-		/*
-		 * log.warn("base path for switcher:"+switcher.getBasePath());
-		 * switcher.save();
-		 */
+		
+		 switcher = new PropertiesConfiguration(new
+		 File("config/status.properties"));
+		 
+		
+		 log.warn("base path for switcher:"+switcher.getBasePath());
+		 switcher.save();
+		 
 	}
 
-	public long getSavedOffset() throws ConfigurationException {
+	public Map<Integer,String> getSavedOffset() throws ConfigurationException {
 		offsetConfig.refresh();
-		return offsetConfig.getLong("offset", 0L);
+		Iterator<String> it=offsetConfig.getKeys();
+		Map<Integer,String> offsetMap=new HashMap<Integer,String>();
+		while (it.hasNext()) {
+			String key=it.next();
+			offsetMap.put(Integer.valueOf(key), offsetConfig.getString(key,"-1"));
+		}
+		return offsetMap;
 	}
 
 	public boolean isStop() throws ConfigurationException {
-		offsetConfig.refresh();
-		return offsetConfig.getString("status", "start").trim().toLowerCase().equals("stop");
+		switcher.refresh();
+		return switcher.getString("status", "start").trim().toLowerCase().equals("stop");
 	}
 
-	public void saveOffset(long currentOffset) throws ConfigurationException {
-		offsetConfig.setProperty("offset", currentOffset);
+	public void saveOffset(Map<Integer,String> currentOffsetMap) throws ConfigurationException {
+		for (Map.Entry<Integer,String> entry : currentOffsetMap.entrySet()) {
+			offsetConfig.setProperty(String.valueOf(entry.getKey()), entry.getValue());
+		}
 		offsetConfig.save();
+	}
+
+	public void reInitialOffset() {
+		// TODO Auto-generated method stub
+		Iterator<String> keys=offsetConfig.getKeys();
+		while (keys.hasNext()) {
+			offsetConfig.setProperty(keys.next(), -1);
+		}
+		try {
+			offsetConfig.save();
+		} catch (ConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

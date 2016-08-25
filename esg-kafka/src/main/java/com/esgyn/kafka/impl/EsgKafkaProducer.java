@@ -12,7 +12,7 @@ public class EsgKafkaProducer {
 		Properties p = new Properties();
 		p.load(EsgKafkaProducer.class.getResource("/config.properties").openStream());
 		Properties props = new Properties();
-		props.put("bootstrap.servers", p.getProperty("bootstrap.servers", "192.168.0.34:9092"));
+		props.put("bootstrap.servers", p.getProperty("bootstrap.servers", "192.168.1.46:9092"));
 		props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 		props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 		// props.put("serializer.class", "com.esgyn.kafka.impl.JsonEncoder");
@@ -42,9 +42,9 @@ public class EsgKafkaProducer {
 				+ "  }																											  "
 				+ "}		"
 				+ "																									  ";
-		smsg="ccccdddddmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmdddddddddddddddcccc";
+		/*smsg="ccccdddddmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmdddddddddddddddcccc";*/
 		KafkaProducer<String, String> producer = new KafkaProducer<String, String>(props);
-		String topic = "topic1";
+		String topic = "topic3";
 		ProducerRecord<String, String> record = new ProducerRecord<String, String>(topic, smsg);
 		producer.send(record);
 		producer.close();
