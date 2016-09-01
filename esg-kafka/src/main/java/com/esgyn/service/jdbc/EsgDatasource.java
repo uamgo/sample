@@ -23,6 +23,8 @@ public class EsgDatasource {
 		for (Entry<Object, Object> entry : config.entrySet()) {
 			if (entry.getKey().toString().startsWith("db.")) {
 				_config.put(entry.getKey().toString().substring(3), entry.getValue());
+				if (log.isDebugEnabled())
+					log.debug(entry.getKey().toString().substring(3) + "=" + entry.getValue());
 			}
 		}
 		if (ds != null) {

@@ -16,13 +16,13 @@ public class SaveTool {
 	private PropertiesConfiguration offsetConfig;
 	private PropertiesConfiguration switcher;
 
-	public SaveTool(Properties p) throws ConfigurationException {
-		offsetConfig = new PropertiesConfiguration(new File(p.getProperty("offset")));
+	public SaveTool(Properties p, String absoluteBasePath) throws ConfigurationException {
+		offsetConfig = new PropertiesConfiguration(new File(absoluteBasePath+ "/../config/offset.properties"));
 		offsetConfig.setAutoSave(false);
 		log.warn("base path for offsetConfig:" + offsetConfig.getBasePath());
 		
 		 switcher = new PropertiesConfiguration(new
-		 File("config/status.properties"));
+		 File(absoluteBasePath + "/../config/status.properties"));
 		 
 		
 		 log.warn("base path for switcher:"+switcher.getBasePath());

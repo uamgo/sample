@@ -1,11 +1,15 @@
 package com.esgyn.kafka.impl;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Paths;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -29,6 +33,7 @@ public class Runner {
 	public static void main(String[] args) throws FileNotFoundException, IOException, URISyntaxException, SQLException,
 			ConfigurationException, InterruptedException {
 		Properties p = new Properties();
+		String absoluteBasePath=null;
 		InputStream input = null;
 		if (args.length > 0) {
 			try {
@@ -38,7 +43,13 @@ public class Runner {
 			}
 		}
 		if (input == null) {
-			input = Runner.class.getResource("/config.properties").openStream();
+			String path = Runner.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+			if (path.contains(".jar")) {
+				absoluteBasePath = path.substring(0, path.lastIndexOf("/") + 1); 
+			}
+			/*System.out.println("--------------------------------------path:"+ path);
+			System.out.println("--------------------------------------absoluteBasePath:"+ absoluteBasePath);*/
+			input=new FileInputStream(absoluteBasePath + "/../config/config.properties");
 		}
 		p.load(input);
 
@@ -59,8 +70,6 @@ public class Runner {
 			consumer = new KConsumerImpl(p);
 			log.error(e.getMessage(), e);
 		}
-		/* new ThreadAwait(consumer).start(); */
-		/* consumer.await(); */
 		EJdbc ej = null;
 		try {
 			ej = (EJdbc) Class.forName(jdbcImpl).getConstructors()[0].newInstance(p);
@@ -68,7 +77,7 @@ public class Runner {
 			ej = new EJdbcImpl(p);
 			log.error(e.getMessage(), e);
 		}
-		SaveTool st = new SaveTool(p);
+		SaveTool st = new SaveTool(p,absoluteBasePath);
 
 		EsgDatasource.addConfig(p);
 		boolean hasRecords = true;

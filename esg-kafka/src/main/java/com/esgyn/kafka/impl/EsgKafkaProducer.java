@@ -1,5 +1,7 @@
 package com.esgyn.kafka.impl;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Properties;
@@ -10,6 +12,7 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 public class EsgKafkaProducer {
 	public static void produce() throws URISyntaxException, IOException {
 		Properties p = new Properties();
+		/*p.load(new FileInputStream("config.properties"));*/
 		p.load(EsgKafkaProducer.class.getResource("/config.properties").openStream());
 		Properties props = new Properties();
 		props.put("bootstrap.servers", p.getProperty("bootstrap.servers", "192.168.1.46:9092"));
@@ -19,7 +22,7 @@ public class EsgKafkaProducer {
 		// props.put("partitioner.class",
 		// "com.esgyn.kafka.impl.SimplePartitioner");
 		props.put("acks", "1");
-
+			
 		String smsg = "{																											  "
 				+ "  \"MetricsName\": \"cpu/limit\",																							  "
 				+ "  \"MetricsValue\": {																									  "
