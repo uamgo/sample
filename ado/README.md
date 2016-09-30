@@ -39,6 +39,7 @@ try{
   //fill data and add into batch
   int n=0;
   int batchSize = 10000;
+  //what kinds of outside loop depends on the business logic
   for (int i = 0; i < 1000000; i++)
   {
     cmd.Parameters[0].Value = "test col1";
