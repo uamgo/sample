@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 public class BaseTest {
 	protected static final Logger log = LoggerFactory.getLogger(BaseTest.class);
-	protected static String url = "jdbc:t4jdbc://10.10.10.136:23400/:fetchBufferSize=1;connectionTimeout=0";
+	protected static String url = "jdbc:t4jdbc://10.10.10.169:23400/:fetchBufferSize=1;connectionTimeout=0";
 	protected static String driverClass = "org.trafodion.jdbc.t4.T4Driver";
 	protected static String userName = "trafodion";
 	protected static String pwd = "traf123";

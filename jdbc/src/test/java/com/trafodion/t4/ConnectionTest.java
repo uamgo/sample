@@ -18,7 +18,7 @@ public class ConnectionTest extends BaseTest {
 	@Test
 	public void create() throws SQLException, ClassNotFoundException {
 		Class.forName(driverClass);
-		for (int i = 0; i < 1000; i++) {
+		for (int i = 0; i < 10; i++) {
 			System.out.println(i);
 			conn = DriverManager.getConnection(url, userName, pwd);
 			Statement st = conn.createStatement();
