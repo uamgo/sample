@@ -29,7 +29,7 @@ cmd.ExecuteNonQuery();
 ```
 ######Batch insert
 ```
-cmd.CommandText = "insert into t0 values(?,?)";
+cmd.CommandText = "upsert using load into t0 values(?,?)";
 //Define required parameters
 cmd.Parameters.Add(new EsgynDBParameter("c0", EsgynDBType.Varchar));
 cmd.Parameters.Add(new EsgynDBParameter("c1", EsgynDBType.Varchar));
@@ -37,15 +37,26 @@ cmd.Parameters.Add(new EsgynDBParameter("c1", EsgynDBType.Varchar));
 cmd.Prepare();
 try{  
   //fill data and add into batch
-  for (int i = 0; i < 10; i++)
+  int n=0;
+  int batchSize = 10000;
+  //what kinds of outside loop depends on the business logic
+  for (int i = 0; i < 1000000; i++)
   {
     cmd.Parameters[0].Value = "test col1";
     cmd.Parameters[1].Value = "test col2";
     cmd.AddBatch();
+    if( ++n >= batchSize){
+    	//Execute Batch, add try-catch block if you don't want to break the loop while got error
+    	cmd.ExecuteNonQuery();
+	n = 0;
+    }
   }
-  //Execute Batch
-  cmd.ExecuteNonQuery();  
-catch(EsgynDBException e)  
+  
+  if(n>0){
+  	//Execute Batch
+  	cmd.ExecuteNonQuery();  
+  }
+}catch(EsgynDBException e)  
 {  
   for(int i=0; i<e.Errors.Count; i++)  
   {  
