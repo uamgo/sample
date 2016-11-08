@@ -91,8 +91,12 @@ public class Proc {
 	}
 
 	private static void checkTable(Statement st, String mdTableName) throws SQLException {
+		String sql = "create table if not exists trafodion.seabase.proc_md_tab("
+				+ "pl_name varchar(500) character set iso88591 collate default no default not null not droppable serialized,"
+				+ "pl_text varchar(102400) character set iso88591 collate default default null serialized,"
+				+ "primary key (pl_name asc))";
+		st.execute(sql);
 		// st.execute(String.format(plCreateDDL, mdTableName));
-
 	}
 
 	public static void main(String[] args) throws IOException, Exception {
