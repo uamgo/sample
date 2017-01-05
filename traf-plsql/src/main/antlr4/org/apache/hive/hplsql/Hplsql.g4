@@ -692,7 +692,7 @@ quit_stmt :
      ;
      
 raise_stmt :
-       T_RAISE
+       T_RAISE L_ID
      ;
      
 resignal_stmt :         // RESIGNAL statement

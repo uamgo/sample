@@ -806,7 +806,7 @@ public class Exec extends HplsqlBaseVisitor<Integer> {
 			for (Entry<Object, Object> entry : this.originalConfig.entrySet()) {
 				conf.set((String) entry.getKey(), (String) entry.getValue());
 			}
-		}
+		}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
 		conn = new Conn(this);
 		meta = new Meta(this);
 		initOptions();
@@ -1130,6 +1130,18 @@ public class Exec extends HplsqlBaseVisitor<Integer> {
 	}
 
 	/**
+	 * RAISE statement
+	 * @throws Exception 
+	 */
+	@Override
+	public Integer visitRaise_stmt(HplsqlParser.Raise_stmtContext ctx){
+		String exception_str =ctx.L_ID().getText();
+		exec.addVariable(new Var(exception_str));
+		exec.signal(new Exception());
+		return 1;
+	}
+	
+	/**
 	 * SQL INSERT statement
 	 */
 	@Override
@@ -1159,6 +1171,12 @@ public class Exec extends HplsqlBaseVisitor<Integer> {
 		}
 		if (ctx.L_ID().toString().equalsIgnoreCase("OTHERS")) {
 			trace(ctx, "EXCEPTION HANDLER");
+			exec.signals.pop();
+			enterScope(Scope.Type.HANDLER);
+			visit(ctx.block());
+			leaveScope();
+		}else if(exec.findVariable(ctx.L_ID().toString())!= null) {
+			trace(ctx, "EXCEPTION HANDLER " + ctx.L_ID().toString());
 			exec.signals.pop();
 			enterScope(Scope.Type.HANDLER);
 			visit(ctx.block());
@@ -1900,7 +1918,7 @@ public class Exec extends HplsqlBaseVisitor<Integer> {
 	public Integer visitSignal_stmt(HplsqlParser.Signal_stmtContext ctx) {
 		return exec.stmt.signal(ctx);
 	}
-
+	
 	/**
 	 * RESIGNAL statement
 	 */

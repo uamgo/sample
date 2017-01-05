@@ -104,7 +104,7 @@ public class Proc {
 		try {
 			PrintStream o = System.out;
 			System.setErr(o);
-			String fileName = "D:\\test\\pltest.sql";
+			String fileName = "D:\\final_raise.sql";
 			String content = null;
 			if (args.length > 0) {
 				content = args[0];
@@ -115,11 +115,11 @@ public class Proc {
 			System.out.println(content);
 
 			String[] result = new String[1];
-			String url = "jdbc:t4jdbc://10.10.10.136:23400/:";
+			String url = "jdbc:t4jdbc://192.168.0.45:23400/:";
 			String driverClass = "org.trafodion.jdbc.t4.T4Driver";
 			Class.forName(driverClass);
-			Connection conn = DriverManager.getConnection(url, "zz", "zz");
-			exec(conn, new File(fileName), null, driverClass, url, "zz", "zz");
+			Connection conn = DriverManager.getConnection(url, "trafodion", "traf123");
+			exec(conn, new File(fileName), null, driverClass, url, "trafodion", "traf123");
 
 			System.setOut(o);
 			System.setErr(System.out);
