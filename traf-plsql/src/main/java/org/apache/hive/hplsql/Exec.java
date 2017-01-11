@@ -2536,6 +2536,28 @@ public class Exec extends HplsqlBaseVisitor<Integer> {
 			}
 		}
 	}
+	
+	@Override
+	public Integer visitBegin_transaction_stmt(HplsqlParser.Begin_transaction_stmtContext ctx){
+		String connName = exec.getStatementConnection();
+		conn.setAutoCommit(false,connName);
+		return 0;
+	}
+	
+	@Override
+	public Integer visitCommit_stmt(HplsqlParser.Commit_stmtContext ctx){
+		String connName = exec.getStatementConnection();
+		conn.commit(connName);
+		return 0;
+	}
+	
+	@Override
+	public Integer visitRollback_stmt(HplsqlParser.Rollback_stmtContext ctx){
+		String connName = exec.getStatementConnection();
+		conn.rollBack(connName);
+		return 0;
+	}
+
 
 	/**
 	 * Informational messages

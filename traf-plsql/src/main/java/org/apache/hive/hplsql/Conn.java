@@ -103,11 +103,12 @@ public class Conn {
 	public Query executeSql(String sql, String connName) {
 		Query query = new Query(sql);
 		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
 		try {
 			conn = getConnection(connName);
 			runPreSql(connName, conn);
-			Statement stmt = conn.createStatement();
-			ResultSet rs = null;
+			stmt = conn.createStatement();
 			exec.info(null, "Starting SQL statement");
 			timer.start();
 			if (stmt.execute(sql)) {
@@ -120,6 +121,9 @@ public class Conn {
 			}
 		} catch (Exception e) {
 			query.setError(e);
+			if(validate(conn)){
+				query.set(conn, stmt, rs);
+			}
 		}
 		return query;
 	}
@@ -299,5 +303,58 @@ public class Conn {
 				}
 			}
 		}
+	}
+	
+	public void setAutoCommit(Boolean bool,String connName){
+		Connection conn = null;
+		try {
+			conn = getConnection(connName);
+			conn.setAutoCommit(bool);
+			returnConnection(connName,conn);
+		} catch (Exception e) {
+			System.out.println("Transaction begin error:" + e.getMessage());
+		}
+	}
+	
+	public void commit(String connName){
+		Connection conn = null;
+		try {
+			conn = getConnection(connName);
+			conn.commit();
+			returnConnection(connName,conn);
+		} catch (Exception e) {
+			System.out.println("Commit error:" + e.getMessage());
+		}
+	}
+	
+	public void rollBack(String connName){
+		Connection conn = null;
+		try {
+			conn = getConnection(connName);
+			conn.rollback();
+			returnConnection(connName,conn);
+		} catch (Exception e) {
+			System.out.println("Rollback error:" + e.getMessage());
+		}
+	}
+	
+	public Boolean validate(Connection conn){
+		Statement stmt = null;
+		try {
+			stmt = conn.createStatement();
+			String sql = "values(1)";
+			stmt.execute(sql);
+		} catch (SQLException e) {
+			System.out.println("Connection is not available:" + e.getMessage());
+			return false;
+		} finally{
+			try {
+				if(stmt != null){
+					stmt.close();
+				}
+			} catch (SQLException e) {
+			}
+		}
+		return true;
 	}
 }

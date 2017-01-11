@@ -1013,67 +1013,70 @@ public class Stmt {
    * EXEC, EXECUTE and EXECUTE IMMEDIATE statement to execute dynamic SQL or stored procedure
    */
   public Integer exec(HplsqlParser.Exec_stmtContext ctx) { 
-    if (execProc(ctx)) {
-      return 0;
-    }
-    trace(ctx, "EXECUTE");
-    Var vsql = evalPop(ctx.expr());
-    String sql = vsql.toString();
-    if (trace) {
-      trace(ctx, "SQL statement: " + sql);
-    }
-    Query query = exec.executeSql(ctx, sql, exec.conf.defaultConnection);
-    if (query.error()) {
-      exec.signal(query);
-      return 1;
-    }
-    ResultSet rs = query.getResultSet();
-    if (rs != null) {
-      try {
-        ResultSetMetaData rm = rs.getMetaData();
-        if (ctx.T_INTO() != null) {
-          int cols = ctx.L_ID().size();
-          if (rs.next()) {
-            for (int i = 0; i < cols; i++) {
-              Var var = exec.findVariable(ctx.L_ID(i).getText());
-              if (var != null) {
-                if (var.type != Var.Type.ROW) {
-                  var.setValue(rs, rm, i + 1);
-                }
-                else {
-                  var.setValues(rs, rm);
-                }
-                if (trace) {
-                  trace(ctx, var, rs, rm, i + 1);
-                }
-              } 
-              else if (trace) {
-                trace(ctx, "Variable not found: " + ctx.L_ID(i).getText());
-              }
-            }
-            exec.setSqlCode(0);
-          }
-        }
-        // Print the results
-        else {
-          int cols = rm.getColumnCount();
-          while(rs.next()) {
-            for(int i = 1; i <= cols; i++) {
-              if(i > 1) {
-                System.out.print("\t");
-              }
-              System.out.print(rs.getString(i));
-            }
-            System.out.println("");
-          }
-        }
-      } 
-      catch(SQLException e) {
-        exec.setSqlCode(e);
-      } 
-    }   
-    exec.closeQuery(query, exec.conf.defaultConnection);
-    return 0; 
+	  Query query= null;
+	  try{
+		  if (execProc(ctx)) {
+			  return 0;
+			  }
+		  trace(ctx, "EXECUTE");
+		  Var vsql = evalPop(ctx.expr());
+		  String sql = vsql.toString();
+		  if (trace) {
+			  trace(ctx, "SQL statement: " + sql);
+			  }
+		  query = exec.executeSql(ctx, sql, exec.conf.defaultConnection);
+		  if (query.error()) {
+			  exec.signal(query);
+		      return 1;
+		      }
+		  ResultSet rs = query.getResultSet();
+		  if (rs != null) {
+			  try {
+				  ResultSetMetaData rm = rs.getMetaData();
+				  if (ctx.T_INTO() != null) {
+					  int cols = ctx.L_ID().size();
+					  if (rs.next()) {
+						  for (int i = 0; i < cols; i++) {
+							  Var var = exec.findVariable(ctx.L_ID(i).getText());
+							  if (var != null) {
+								  if (var.type != Var.Type.ROW) {
+									  var.setValue(rs, rm, i + 1);
+									  }else {
+										  var.setValues(rs, rm);
+										  }
+								  if (trace) {
+									  trace(ctx, var, rs, rm, i + 1);
+									  }
+								  } else if (trace) {
+									  trace(ctx, "Variable not found: " + ctx.L_ID(i).getText());
+									  }
+							  }
+						  exec.setSqlCode(0);
+						  }
+					  }
+				  // Print the results
+				  else {
+					  int cols = rm.getColumnCount();
+					  while(rs.next()) {
+						  for(int i = 1; i <= cols; i++) {
+							  if(i > 1) {
+								  System.out.print("\t");
+								  }
+							  System.out.print(rs.getString(i));
+							  }
+						  System.out.println("");
+						  }
+					  }
+				  } catch(SQLException e) {
+					  exec.setSqlCode(e);
+					  }
+			  }
+		  }finally{
+			  if(query!=null){
+				  exec.closeQuery(query, exec.conf.defaultConnection);
+				  }
+			  }
+	  return 0; 
   }
   
   /**
