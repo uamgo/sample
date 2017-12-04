@@ -34,6 +34,7 @@ try {
     ps.executeBatch();
 //close your statement
 } catch (SQLException se) {
+//print details error messages for each row
     SQLException s = se;
     do {
         s.printStackTrace();
