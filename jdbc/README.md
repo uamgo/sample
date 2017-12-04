@@ -23,16 +23,26 @@ st.close();
 ```
 ######Batch insert
 ```
-PreparedStatement ps = conn.prepareStatement("upsert using load into mylocaltest.t1(id, name, weight) values(?,?,?)");
-for(int i=0; i<1000; i++){
-	ps.setInt(1, r.nextInt());
-	ps.setString(2, "aaa"+r.nextLong());
-	ps.setDouble(1, r.nextDouble());
-	ps.addBatch();
-}
-ps.executeBatch();
+try {
+    PreparedStatement ps = conn.prepareStatement("upsert using load into mylocaltest.t1(id, name, weight) values(?,?,?)");
+    for (int i = 0; i < 1000; i++) {
+        ps.setInt(1, r.nextInt());
+        ps.setString(2, "aaa" + r.nextLong());
+        ps.setDouble(1, r.nextDouble());
+        ps.addBatch();
+    }
+    ps.executeBatch();
 //close your statement
-ps.close();
+} catch (SQLException se) {
+    SQLException s = se;
+    do {
+        s.printStackTrace();
+        s = s.getNextException();
+    } while (s != null);
+} finally {
+    if (ps != null)
+        ps.close();
+}
 ```
 ######release connection
 ```
