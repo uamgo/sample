@@ -43,4 +43,27 @@ using (EsgynDBDataReader dr = cmd.ExecuteReader())
     }
 }
 ```
-
+###ODBC Sample( For more details, please go into "jdbc")
+######create a connection and perform a simple query
+```
+SQLHENV henv = SQL_NULL_HANDLE;
+SQLHDBC hdbc = SQL_NULL_HANDLE;
+SQLHSTMT hstmt = SQL_NULL_HANDLE;
+SQLHWND hWnd = SQL_NULL_HANDLE;
+SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &henv);
+SQLSetEnvAttr(henv, SQL_ATTR_ODBC_VERSION, (void*)SQL_OV_ODBC3, 0);
+SQLAllocHandle(SQL_HANDLE_DBC, henv, &hdbc);
+SQLDriverConnect(hdbc,hWnd,InConnStr,SQL_NTS,OutConnStr,sizeof(OutConnStr),&ConnStrLength,SQL_DRIVER_NOPROMPT);
+SQLAllocHandle(SQL_HANDLE_STMT, hdbc, &hstmt);
+SQLExecDirect(hstmt, (SQLCHAR *)"select * from t0", SQL_NTS);
+while (SQLFetch(hstmt) == SQL_SUCCESS)
+{
+    char buffer[1024] = "";
+    SQLGetData(hstmt, 1, SQL_C_CHAR, buffer, 1024, NULL);
+    printf("%s\n", buffer);
+}
+SQLFreeHandle(SQL_HANDLE_STMT, hstmt);
+SQLDisconnect(hdbc);
+SQLFreeHandle(SQL_HANDLE_DBC, hdbc);
+SQLFreeHandle(SQL_HANDLE_ENV, henv);
+```
