@@ -43,7 +43,7 @@ using (EsgynDBDataReader dr = cmd.ExecuteReader())
     }
 }
 ```
-###ODBC Sample( For more details, please go into "jdbc")
+###ODBC Sample( For more details, please go into "odbc") 
 ######create a connection and perform a simple query
 ```
 SQLHENV henv = SQL_NULL_HANDLE;
