@@ -1,7 +1,7 @@
 ##Example for JDBC/ODBC/ADO.NET drivers
 ###JDBC Sample( For more details, please go into "jdbc")
 ```
-String url="jdbc:t4jdbc://10.10.10.136:23400/:";    
+String url="jdbc:t4jdbc://10.10.10.136:23400/:schema=seabase";    
 String driverClass="org.trafodion.jdbc.t4.T4Driver";
 String userName="zz";
 String pwd="zz";
