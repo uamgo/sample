@@ -44,7 +44,9 @@ using (EsgynDBDataReader dr = cmd.ExecuteReader())
 }
 ```
 ###ODBC Sample( For more details, please go into "odbc") 
-######create a connection and perform a simple query
+######create a connection and perform a simple query  
+https://docs.microsoft.com/en-us/sql/odbc/reference/develop-app/developing-applications?view=sqlallproducts-allversions  
+
 ```
 SQLHENV henv = SQL_NULL_HANDLE;
 SQLHDBC hdbc = SQL_NULL_HANDLE;
