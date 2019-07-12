@@ -4,7 +4,7 @@
 
 	<groupId>com.esgyn</groupId>
 	<artifactId>jdbc</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<packaging>jar</packaging>
 
 	<name>jdbc</name>
