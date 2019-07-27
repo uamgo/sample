@@ -21,12 +21,11 @@ public class DruidTest {
   private static DruidDataSource dataSource = null;
 
   @BeforeClass public static void beforeClass() throws ClassNotFoundException, SQLException {
-//    Class.forName(driverClass);
-
     dataSource = new DruidDataSource();
     dataSource.setDbType("oracle");
     dataSource.setInitialSize(3);
     dataSource.setMaxActive(20);
+    //should go with the changes in T4Driver.getMajorVerion > 10
     dataSource.setFilters("wall,stat");
     dataSource.setDriverClassName(driverClass);
     dataSource.setUrl(url);
