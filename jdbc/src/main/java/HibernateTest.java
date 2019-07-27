@@ -21,15 +21,15 @@ public class HibernateTest {
       Query query = session.createSQLQuery(hql);
       System.out.println("hql================" + hql);
 
-//      Iterator it = map.keySet().iterator();
-//      while (it.hasNext()) {
-//        Object key = it.next();
-//        Object value = map.get(key);
-//        if (value != null && !value.toString().equals("") && !(key.toString().equals("start")) && (
-//            !key.toString().equals("limit") && (!key.toString().equals("sortString")))) {
-//          query.setParameter(key.toString(), value);
-//        }
-//      }
+      //      Iterator it = map.keySet().iterator();
+      //      while (it.hasNext()) {
+      //        Object key = it.next();
+      //        Object value = map.get(key);
+      //        if (value != null && !value.toString().equals("") && !(key.toString().equals("start")) && (
+      //            !key.toString().equals("limit") && (!key.toString().equals("sortString")))) {
+      //          query.setParameter(key.toString(), value);
+      //        }
+      //      }
 
       System.out.println("first================" + (first - 1));
       System.out.println("pageSize=============" + pageSize);
@@ -40,6 +40,9 @@ public class HibernateTest {
 
       result = query.list();
       System.err.println("result.size()=============" + result.size());
+      if(result.size() == 0){
+        System.exit(0);
+      }
     } catch (RuntimeException re) {
       re.printStackTrace();
     }
@@ -47,8 +50,7 @@ public class HibernateTest {
   }
 
   public static void main(String[] args) {
-    Configuration config = new AnnotationConfiguration()
-        .configure(new File("/Users/kevin/esgyn/sample/jdbc/src/main/java/hibernate.cfg.xml"));
+    Configuration config = new AnnotationConfiguration().configure("hibernate.cfg.xml");
     SessionFactory sessionFactory = config.buildSessionFactory();
     session = sessionFactory.openSession();
     String hql = "select * from Student";
