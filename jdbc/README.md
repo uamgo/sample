@@ -72,3 +72,9 @@ doing what you want with conn
 */
 conn.close();//conn will return back to pool
 ```
+
+###Hibernate example  
+Code in src/main/java/HibernateTest.java  
+###Druid datasource example   
+Code src/test/com/trafodion/t4/DruidTest  
+
