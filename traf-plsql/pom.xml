@@ -5,7 +5,7 @@
 	<artifactId>traf-plsql</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<properties>
-		<junit.version>4.11</junit.version>
+		<junit.version>4.13.1</junit.version>
 		<guava.version>14.0.1</guava.version>
 		<commons-cli.version>1.2</commons-cli.version>
 		<commons-lang.version>2.6</commons-lang.version>
